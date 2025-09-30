@@ -1,23 +1,30 @@
 <?php
 
-$login = $_POST['login'];
-$password = $_POST['password'];
+function ValidateLogin(array $methodPost): array
+{
 
-$errors = [];
- if (isset($_POST['login'])) {
-     $login = $_POST['login'];
- } else { $errors['login'] = 'login is required';
+    $errors = [];
+    if (isset($_POST['login'])) {
+        $login = $_POST['login'];
+    } else {
+        $errors['login'] = 'login is required';
+    }
+
+    if (isset($_POST ['password'])) {
+        $password = $_POST['password'];
+    } else {
+        $errors['password'] = 'password is required';
+    }
+    return $errors;
 }
 
-if (isset($_POST ['password'])) {
-    $password = $_POST['password'];
-} else {
-    $errors['password'] = 'password is required';
-}
+$errors = ValidateLogin($_POST);
 
 if (empty($errors)) {
-    $pdo = new PDO('pgsql:host=postgres_db;dbname=mydb', 'yonateiko', 'pass');
+    $login = $_POST['login'];
+    $password = $_POST['password'];
 
+    $pdo = new PDO('pgsql:host=postgres_db;dbname=mydb', 'yonateiko', 'pass');
     $stmt = $pdo->prepare('SELECT * FROM users WHERE email = :login');
     $stmt->execute(['login' => $login]);
 
@@ -25,12 +32,14 @@ if (empty($errors)) {
 
     if ($data === false) {
         $errors['login'] = 'Неверный логин или пароль';
+        require_once './get_login.php';
     } else {
         $passwordFromDB = $data['password'];
         if (password_verify ($password, $passwordFromDB)) {
-            echo 'ok!';
+            setcookie('user_id', $data['id']);
         } else {
             $errors['password'] = 'Неверный логин или пароль';
+            require_once './get_login.php';
         }
     }
 }
