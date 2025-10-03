@@ -1,9 +1,15 @@
 <?php
 
 if (!isset($_COOKIE['user_id'])) {
-    header('Location: ./get+login.php');
-}
-$products = [];
+    //header('Location: ./get_login.php');
+//if (!isset ($_SESSION['user id'])) {
+    header('Location: ./get_login.php');
+} else {
+    $pdo = new PDO('pgsql:host=postgres_db;dbname=mydb', 'yonateiko', 'pass');
+    $stmt = $pdo->query ("SELECT * FROM products");
+
+    $products = $stmt->fetchAll();
+};
 
 ?>
 
@@ -14,64 +20,19 @@ $products = [];
         <div class="card text-center">
             <a href="#">
                 <div class="card-header">
-                    Hit!
+                    Электроника
                 </div>
-                <img class="card-img-top" src="https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?ixlib=rb-0.3.5&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=400&fit=max&ixid=eyJhcHBfaWQiOjE0NTg5fQ&s=043d89cbf03cbdbbe8ed9f9e5e44ce6f" alt="Card image">
+                <img class="card-img-top" src="<?php echo $product['urlview']; ?>" alt="Card image">
                 <div class="card-body">
                     <p class="card-text text-muted"><?php echo $product['name']; ?> </p>
-                    <a href="#"><h5 class="card-title">Very long item name</h5></a>
+                    <a href="#"><h5 class="card-title"><?php echo $product['description']; ?></h5></a>
                     <div class="card-footer">
-                        3000$
+                        Price: <?php echo $product['price']; ?> рублей
                     </div>
                 </div>
             </a>
         </div>
         <?php endforeach; ?>
-        <div class="card text-center">
-            <a href="#">
-                <div class="card-header">
-                    Hit!
-                </div>
-                <img class="card-img-top" src="https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?ixlib=rb-0.3.5&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=400&fit=max&ixid=eyJhcHBfaWQiOjE0NTg5fQ&s=043d89cbf03cbdbbe8ed9f9e5e44ce6f" alt="Card image">
-                <div class="card-body">
-                    <p class="card-text text-muted">Category name</p>
-                    <a href="#"><h5 class="card-title">Very long item name</h5></a>
-                    <div class="card-footer">
-                        3000$
-                    </div>
-                </div>
-            </a>
-        </div>
-        <div class="card text-center">
-            <a href="#">
-                <div class="card-header">
-                    Hit!
-                </div>
-                <img class="card-img-top" src="https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?ixlib=rb-0.3.5&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=400&fit=max&ixid=eyJhcHBfaWQiOjE0NTg5fQ&s=043d89cbf03cbdbbe8ed9f9e5e44ce6f" alt="Card image">
-                <div class="card-body">
-                    <p class="card-text text-muted">Category name</p>
-                    <a href="#"><h5 class="card-title">Very long item name</h5></a>
-                    <div class="card-footer">
-                        3000$
-                    </div>
-                </div>
-            </a>
-        </div>
-        <div class="card text-center">
-            <a href="#">
-                <div class="card-header">
-                    Hit!
-                </div>
-                <img class="card-img-top" src="https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?ixlib=rb-0.3.5&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=400&fit=max&ixid=eyJhcHBfaWQiOjE0NTg5fQ&s=043d89cbf03cbdbbe8ed9f9e5e44ce6f" alt="Card image">
-                <div class="card-body">
-                    <p class="card-text text-muted">Category name</p>
-                    <a href="#"><h5 class="card-title">Very long item name</h5></a>
-                    <div class="card-footer">
-                        3000$
-                    </div>
-                </div>
-            </a>
-        </div>
     </div>
 </div>
 
@@ -102,8 +63,8 @@ $products = [];
     }
 
     .card-header {
-        font-size: 13px;
-        color: gray;
+        font-size: 18px;
+        color: cornflowerblue;
         background-color: white;
     }
 
@@ -113,7 +74,23 @@ $products = [];
 
     .card-footer{
         font-weight: bold;
-        font-size: 18px;
+        font-size: 20px;
         background-color: white;
     }
+
+    /* Для увеличения размера названий товаров */
+    .card-title {
+        font-size: 18px; /* увеличьте по желанию */
+        font-weight: bold;
+    }
+    .card-text {
+        font-size: 24px; /* или больше, по желанию */
+        font-weight: bold;
+    }
+    .card-img-top {
+        width: 100%;          /* картинка занимает всю ширину карточки */
+        height: 330px;        /* задайте нужную высоту (больше, если хотите) */
+        object-fit: cover;    /* обрезает изображение по размеру без искажения */
+    }
 </style>
+<script src ="forcatalog.js"></script>

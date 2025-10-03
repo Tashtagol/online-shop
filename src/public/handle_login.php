@@ -37,11 +37,15 @@ if (empty($errors)) {
         $passwordFromDB = $data['password'];
         if (password_verify ($password, $passwordFromDB)) {
             setcookie('user_id', $data['id']);
+            //session_start();
+            //$_SESSION['user_id'] = $data['id'];
+            header('Location: ./catalog.php');
         } else {
             $errors['password'] = 'Неверный логин или пароль';
             require_once './get_login.php';
         }
     }
-}
+} else {
 
-require_once './get_login.php';
+    require_once './get_login.php';
+}
