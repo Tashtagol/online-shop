@@ -9,7 +9,7 @@
 </head>
 <body>
 <div class="wrapper">
-    <form action="handle_login.php" method = "POST">
+    <form action="/login" method = "POST">
         <h2>Login</h2>
         <div class="input-field">
             <?php echo $errors['login'] ?? ''; ?>

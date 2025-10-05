@@ -1,8 +1,8 @@
 <?php
-
-if (!isset($_COOKIE['user_id'])) {
+session_start();
+//if (!isset($_COOKIE['user_id'])) {
     //header('Location: ./get_login.php');
-//if (!isset ($_SESSION['user id'])) {
+  if (!isset ($_SESSION['user_id'])) {
     header('Location: ./get_login.php');
 } else {
     $pdo = new PDO('pgsql:host=postgres_db;dbname=mydb', 'yonateiko', 'pass');
@@ -80,7 +80,7 @@ if (!isset($_COOKIE['user_id'])) {
 
     /* Для увеличения размера названий товаров */
     .card-title {
-        font-size: 18px; /* увеличьте по желанию */
+        font-size: 16px; /* увеличьте по желанию */
         font-weight: bold;
     }
     .card-text {
@@ -88,9 +88,9 @@ if (!isset($_COOKIE['user_id'])) {
         font-weight: bold;
     }
     .card-img-top {
-        width: 100%;          /* картинка занимает всю ширину карточки */
-        height: 330px;        /* задайте нужную высоту (больше, если хотите) */
+        width: 125  %;          /* картинка занимает всю ширину карточки */
+        height: 320px;        /* задайте нужную высоту (больше, если хотите) */
         object-fit: cover;    /* обрезает изображение по размеру без искажения */
     }
 </style>
-<script src ="forcatalog.js"></script>
+<script src ="forCatalog.js"></script>

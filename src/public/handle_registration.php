@@ -1,4 +1,5 @@
 <?php
+ob_start();
 
 function ValidateRegistration(array $methodPost): array {
     $errors = [];
@@ -25,7 +26,6 @@ function ValidateRegistration(array $methodPost): array {
             $stmt = $pdo->prepare("SELECT * FROM users WHERE email = :email");
             $stmt->execute(['email' => $email]);
             $userData = $stmt->fetch();
-
             if ($userData['email'] === $email) {
                 $errors ['email'] = "Email уже зарегестрирован";
             }
@@ -74,7 +74,7 @@ if (empty($errors)) {
 
     $stmt->execute(['name' => $name, 'email' => $email, 'password' => $hash]);
 
-
+    header('Location: ./login');
 }
 
 require_once './get_registration.php';
