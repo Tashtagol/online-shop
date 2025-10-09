@@ -25,6 +25,20 @@ if ($requestUri === '/login') {
     } else {
         echo "$requestMethod не поддерживается адресом $requestUri";
     }
+} elseif ($requestUri === '/add-product') {
+    if ($requestMethod === 'GET') {
+        require_once './get_add_product.php';
+    } elseif ($requestMethod === 'POST') {
+        require_once './handle_add_product.php';
+    } else {
+        echo "$requestMethod не поддерживается адресом $requestUri";
+    }
+} elseif ($requestUri === '/cart') {
+    if ($requestMethod === 'GET') {
+        require_once './cart.php';
+    }  else {
+        echo "$requestMethod не поддерживается адресом $requestUri";
+    }
 }
 else {
         http_response_code(404);

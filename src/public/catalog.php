@@ -14,83 +14,147 @@ session_start();
 ?>
 
 <div class="container">
-    <h3>Catalog</h3>
-    <div class="card-deck">
+    <h3>Каталог товаров</h3>
+
+    <div class="product-grid">
         <?php foreach ($products as $product): ?>
-        <div class="card text-center">
-            <a href="#">
-                <div class="card-header">
-                    Электроника
+            <div class="product-card">
+                <div class="product-image">
+                    <img src="<?php echo $product['viewurl']; ?>" alt="Product image">
                 </div>
-                <img class="card-img-top" src="<?php echo $product['urlview']; ?>" alt="Card image">
-                <div class="card-body">
-                    <p class="card-text text-muted"><?php echo $product['name']; ?> </p>
-                    <a href="#"><h5 class="card-title"><?php echo $product['description']; ?></h5></a>
-                    <div class="card-footer">
-                        Price: <?php echo $product['price']; ?> рублей
+                <div class="product-info">
+                    <h4 class="product-name"><?php echo $product['name']; ?></h4>
+                    <p class="product-description"><?php echo $product['description']; ?></p>
+                    <div class="product-price">
+                        <?php echo number_format($product['price'], 2); ?> ₽
                     </div>
+                    <a href="#" class="btn-add">Добавить в корзину</a>
                 </div>
-            </a>
-        </div>
+            </div>
         <?php endforeach; ?>
+    </div>
+
+    <div class="add-product-wrapper">
+        <a href="/add-product" class="add-product-btn">Добавить товар</a>
     </div>
 </div>
 
 <style>
     body {
-        font-style: sans-serif;
+        font-family: "Poppins", sans-serif;
+        background-color: #f9f9f9;
+        margin: 0;
+        padding: 20px;
     }
 
-    a {
-        text-decoration: none;
-    }
-
-    a:hover {
-        text-decoration: none;
+    .container {
+        width: 90%;
+        margin: 0 auto;
     }
 
     h3 {
-        line-height: 3em;
+        text-align: center;
+        margin-bottom: 30px;
+        color: #333;
     }
 
-    .card {
-        max-width: 16rem;
+    .product-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+        gap: 25px;
     }
 
-    .card:hover {
-        box-shadow: 1px 2px 10px lightgray;
-        transition: 0.2s;
+    .product-card {
+        width: 240px;
+        overflow: hidden;
+        border-radius: 10px;
+        box-shadow: 0 0 8px rgba(0,0,0,0.1);
+        background-color: white;
+        display: flex;
+        flex-direction: column;
     }
 
-    .card-header {
+    .product-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    }
+
+    .product-image img {
+        width: 100%;
+        height: 250px;           /* зафиксированная высота */
+        object-fit: cover;       /* обрезка по блоку без искажений */
+        display: block;          /* убирает лишние пробелы снизу */
+        border-top-left-radius: 10px;
+        border-top-right-radius: 10px;
+    }
+
+
+
+    .product-info {
+        padding: 15px;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .product-name {
         font-size: 18px;
-        color: cornflowerblue;
-        background-color: white;
+        font-weight: bold;
+        color: #333;
     }
 
-    .text-muted {
-        font-size: 11px;
+    .product-description {
+        font-size: 14px;
+        color: #777;
+        line-height: 1.4;
+        height: 42px;
+        overflow: hidden;
+        text-overflow: ellipsis;
     }
 
-    .card-footer{
-        font-weight: bold;
-        font-size: 20px;
-        background-color: white;
+    .product-price {
+        font-size: 18px;
+        font-weight: 600;
+        color: #F2994A;
     }
 
-    /* Для увеличения размера названий товаров */
-    .card-title {
-        font-size: 16px; /* увеличьте по желанию */
+    .btn-add {
+        display: inline-block;
+        text-align: center;
+        background-color: #F2994A;
+        color: white;
+        padding: 10px 15px;
+        border-radius: 8px;
+        text-decoration: none;
+        font-size: 14px;
+        margin-top: auto;
+        transition: background-color 0.2s ease;
+    }
+
+    .btn-add:hover {
+        background-color: #d87d2a;
+    }
+    .add-product-btn {
+        display: inline-block;
+        padding: 10px 20px;
+        background-color: #04AA6D;
+        color: white;
+        text-decoration: none;
+        border-radius: 5px;
         font-weight: bold;
+        transition: background-color 0.3s ease;
     }
-    .card-text {
-        font-size: 24px; /* или больше, по желанию */
-        font-weight: bold;
+
+    .add-product-btn:hover {
+        background-color: #039c64;
     }
-    .card-img-top {
-        width: 125  %;          /* картинка занимает всю ширину карточки */
-        height: 320px;        /* задайте нужную высоту (больше, если хотите) */
-        object-fit: cover;    /* обрезает изображение по размеру без искажения */
+    .add-product-wrapper {
+        display: flex;
+        justify-content: center;
+        margin-top: 40px;
     }
+
+
+
 </style>
 <script src ="forCatalog.js"></script>
