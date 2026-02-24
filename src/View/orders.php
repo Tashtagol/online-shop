@@ -5,23 +5,22 @@
         <?php foreach ($orders as $order): ?>
             <div class="order-card">
                 <div class="order-header">
-                    <span>Заказ <?php echo $order['order_number'] ?? $order['id']; ?></span>
-                    <span><?php echo date('d.m.Y H:i', strtotime($order['order_date'] ?? date('Y-m-d H:i:s'))); ?></span>
+                    <span>Заказ <?php echo $order->getOrderNumber(); ?></span>
+                    <span><?php echo date('d.m.Y H:i', strtotime($order->getOrderDate())); ?></span>
                     <span class="toggle-indicator">▼</span>
                 </div>
 
                 <div class="order-products">
-                    <?php foreach ($order['products'] as $product): ?>
+                    <?php foreach ($order->getProducts() as $product): ?>
                         <div class="product-card">
                             <div class="product-image">
-                                <img src="<?php echo $product['viewurl']; ?>" alt="<?php echo $product['name']; ?>">
+                                <img src="<?php echo htmlspecialchars($product->vieUrl); ?>" alt="<?php echo htmlspecialchars($product->name); ?>">
                             </div>
                             <div class="product-info">
-                                <h5><?php echo $product['name']; ?></h5>
-                                <p><?php echo $product['description']; ?></p>
+                                <h5><?php echo htmlspecialchars($product->name); ?></h5>
                                 <div class="product-details">
-                                    <span>Кол-во: <?php echo $product['order_amount']; ?></span>
-                                    <span>Цена: <?php echo number_format($product['order_price'], 2); ?> ₽</span>
+                                    <span>Кол-во: <?php echo $product->amount; ?></span>
+                                    <span>Цена: <?php echo number_format($product->price, 2); ?> ₽</span>
                                 </div>
                             </div>
                         </div>
@@ -31,8 +30,8 @@
                 <div class="order-total">
                     Общая сумма:
                     <?php
-                    $total = array_reduce($order['products'], function($sum, $p){
-                        return $sum + ($p['order_price'] * $p['order_amount']);
+                    $total = array_reduce($order->getProducts(), function($sum, $p) {
+                        return $sum + ($p->price * $p->amount);
                     }, 0);
                     echo number_format($total, 2);
                     ?> ₽
@@ -46,28 +45,15 @@
 
 <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
-
     body {
         font-family: "Inter", "Segoe UI", sans-serif;
         background: linear-gradient(135deg, #fde7f3 0%, #fff5f8 100%);
         padding: 40px 20px;
         color: #1f2937;
     }
+    .container { max-width: 1200px; margin: 0 auto; }
+    h3 { text-align: center; margin-bottom: 30px; font-size: 28px; font-weight: 700; color: #2d2a32; }
 
-    .container {
-        max-width: 1200px;
-        margin: 0 auto;
-    }
-
-    h3 {
-        text-align: center;
-        margin-bottom: 30px;
-        font-size: 28px;
-        font-weight: 700;
-        color: #2d2a32;
-    }
-
-    /* Заказ */
     .order-card {
         background: #fff0f5;
         border-radius: 22px;
@@ -94,30 +80,14 @@
         transition: transform 0.3s;
     }
 
-    .order-card.expanded .order-header .toggle-indicator {
-        transform: rotate(180deg);
-    }
+    .order-card.expanded .order-header .toggle-indicator { transform: rotate(180deg); }
 
-    .order-products, .order-total {
-        max-height: 0;
-        overflow: hidden;
-        transition: max-height 0.5s ease;
-    }
+    .order-products, .order-total { max-height: 0; overflow: hidden; transition: max-height 0.5s ease; }
 
-    .order-card.expanded .order-products,
-    .order-card.expanded .order-total {
-        max-height: 3000px;
-    }
+    .order-card.expanded .order-products, .order-card.expanded .order-total { max-height: 3000px; }
 
-    /* Сетка товаров */
-    .order-products {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 20px;
-        margin-top: 20px;
-    }
+    .order-products { display: flex; flex-wrap: wrap; gap: 20px; margin-top: 20px; }
 
-    /* Карточка товара (увеличена 1.5 раза) */
     .product-card {
         background: #fff;
         border-radius: 20px;
@@ -128,9 +98,7 @@
         transition: transform 0.2s;
     }
 
-    .product-card:hover {
-        transform: translateY(-5px);
-    }
+    .product-card:hover { transform: translateY(-5px); }
 
     .product-image {
         width: 100%;
@@ -143,18 +111,9 @@
         border-top-right-radius: 20px;
     }
 
-    .product-image img {
-        max-width: 100%;
-        max-height: 100%;
-        object-fit: contain;
-    }
+    .product-image img { max-width: 100%; max-height: 100%; object-fit: contain; }
 
-    .product-info {
-        padding: 16px;
-        display: flex;
-        flex-direction: column;
-        flex-grow: 1;
-    }
+    .product-info { padding: 16px; display: flex; flex-direction: column; flex-grow: 1; }
 
     .product-info h5 {
         font-size: 18px;
@@ -164,16 +123,6 @@
         height: 2.4em;
         overflow: hidden;
         text-overflow: ellipsis;
-    }
-
-    .product-info p {
-        font-size: 14px;
-        color: #4b5563;
-        line-height: 1.4em;
-        height: 4.2em;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        margin-bottom: 8px;
     }
 
     .product-details {
@@ -194,32 +143,15 @@
         border-top: 2px dashed #f3b4d3;
     }
 
-    /* Адаптив */
-    @media (max-width: 1024px) {
-        .product-card {
-            width: 45%;
-        }
-    }
-
+    @media (max-width: 1024px) { .product-card { width: 45%; } }
     @media (max-width: 600px) {
-        .product-card {
-            width: 100%;
-        }
-
-        .order-header {
-            flex-direction: column;
-            align-items: flex-start;
-            gap: 6px;
-        }
-
-        .order-total {
-            text-align: left;
-        }
+        .product-card { width: 100%; }
+        .order-header { flex-direction: column; align-items: flex-start; gap: 6px; }
+        .order-total { text-align: left; }
     }
 </style>
 
 <script>
-    // Раскрытие карточки заказа
     document.querySelectorAll('.order-header').forEach(header => {
         header.addEventListener('click', () => {
             header.parentElement.classList.toggle('expanded');

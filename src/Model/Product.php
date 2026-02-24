@@ -1,77 +1,67 @@
 <?php
 namespace Model;
+
 use PDO;
+
 class Product extends Model
 {
     private int $id;
     private string $name;
     private float $price;
-    private string $vieurl;
+    private string $viewurl;
     private string $description;
 
-
-    public function __construct(int $id, string $name, float $price, string $vieurl, string $description)
-    {
+    public function __construct(int $id = 0, string $name = '', float $price = 0.0, string $viewurl = '', string $description = ''
+    ) {
+        parent::__construct();
         $this->id = $id;
         $this->name = $name;
         $this->price = $price;
-        $this->vieurl = $vieurl;
+        $this->viewurl = $viewurl;
         $this->description = $description;
-
     }
+
     public static function createFromData(array $data): self
     {
-        return new self((int)$data['id'], $data['name'], (float)$data['price'], $data['viewurl'] ?? '', $data['description']
-        );
+        return new self((int)$data['id'], $data['name'], (float)$data['price'], $data['viewurl'], $data['description']);
     }
 
-    public function getProducts(): array
+    public function getAllProducts(): array
     {
-        try {
-            $stmt = self::getPdo()->query("SELECT * FROM products");
-            $rows =  $stmt->fetchAll(PDO::FETCH_ASSOC);
-            return array_map (fn($data)=> self::createFromData($data), $rows);
-        } catch (PDOException $e) {
-            die("Ошибка подключения к БД: " . $e->getMessage());
-        }
-    }
+        $stmt = $this->pdo->query("SELECT * FROM products");
+        $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
+        $result = [];
+        foreach ($rows as $row) {
+            $product = self::createFromData($row);
+            $result[$product->getId()] = $product;
+        }
+
+        return $result;
+    }
 
     public function getProductsByIds(array $ids): array
     {
         if (empty($ids)) return [];
+
         $placeholders = implode(',', array_fill(0, count($ids), '?'));
-
-        $stmt = self::getPdo()->prepare("SELECT * FROM products WHERE id IN ($placeholders)");
+        $stmt = $this->pdo->prepare("SELECT * FROM products WHERE id IN ($placeholders)");
         $stmt->execute($ids);
+
         $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
-        return array_map(fn($data) => self::createFromData($data), $rows);
+
+        $result = [];
+        foreach ($rows as $row) {
+            $product = self::createFromData($row);
+            $result[$product->getId()] = $product;
+        }
+
+        return $result;
     }
 
-    public function getId(): int
-    {
-        return $this->id;
-    }
-
-    public function getName(): string
-    {
-        return $this->name;
-    }
-
-    public function getPrice(): float
-    {
-        return $this->price;
-    }
-
-    public function getVieUrl(): string
-    {
-        return $this->vieurl;
-    }
-
-    public function getDescription(): string
-    {
-        return $this->description;
-    }
-
+    public function getId(): int { return $this->id; }
+    public function getName(): string { return $this->name; }
+    public function getPrice(): float { return $this->price; }
+    public function getVieUrl(): string { return $this->viewurl; }
+    public function getDescription(): string { return $this->description; }
 }
-

@@ -1,17 +1,25 @@
 <?php
 namespace Model;
+
 use PDO;
+use PDOException;
 
 class Model
 {
-    protected static PDO $pdo;
+    protected PDO $pdo;
 
-    protected static function getPdo(): PDO
+    public function __construct()
     {
-        if (!isset(self::$pdo)) {
-            self::$pdo = new PDO('pgsql:host=postgres_db;dbname=mydb', 'yonateiko', 'pass');
-            self::$pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        try {
+            $this->pdo = new PDO(
+                'pgsql:host=postgres_db;dbname=mydb',
+                'yonateiko',
+                'pass'
+            );
+
+            $this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        } catch (PDOException $e) {
+            die("Ошибка подключения к базе: " . $e->getMessage());
         }
-        return self::$pdo;
     }
 }

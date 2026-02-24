@@ -1,21 +1,19 @@
 <?php
 namespace Controller;
+
 use Model\UserProduct;
 use Model\Product;
-use Model\User;
+use Model\OrderProduct;
 
-class dCartController
+class CartController
 {
     private UserProduct $userProductModel;
-    private User $userModel;
     private Product $productModel;
+
     public function __construct()
     {
-
         $this->userProductModel = new UserProduct();
         $this->productModel = new Product();
-        $this->userModel = new User();
-
     }
 
     public function getCartForm()
@@ -24,40 +22,41 @@ class dCartController
         $products = $this->getCart($userId);
         $total = $this->getTotal($products);
 
-        require_once './../View/cart.php'; // Подключаем вьюшку
+        require_once './../View/cart.php';
     }
 
     private function getCart(int $userId): array
     {
+        $userProducts = $this->userProductModel->getUserIdCart($userId);
 
-        $userProductsData = $this->userProductModel->getUserIdCart($userId);
-
-        $ProductsIds = [];
-        foreach ($userProductsData as $item) {
-            $ProductsIds[] = $item['product_id'];
+        if (empty($userProducts)) {
+            return [];
         }
 
-        $allProducts = $this->productModel->getProductsByIds($ProductsIds);
-        $ProductById = [];
+        $productIds = array_map(fn($item) => $item->product_id, $userProducts);
+        $products = $this->productModel->getProductsByIds($productIds);
 
-        foreach ($allProducts as $product) {
-            $ProductById[$product['id']] = $product;
-        }
+        $result = [];
 
-        $products = [];
-        foreach ($userProductsData as $userProduct) {
-            $ProductId = $userProduct['product_id'];
-            $amount = $userProduct['amount'];
-            if (isset($ProductById[$ProductId])) {
-                $product = $ProductById[$ProductId];
-                $product['amount'] = $amount;
-                $products[] = $product;
+        foreach ($userProducts as $item) {
+            $pid = $item->product_id;
+
+            if (isset($products[$pid])) {
+                // Добавляем description товара в массив
+                $result[] = [
+                    'id' => $pid,
+                    'name' => $products[$pid]->getName(),
+                    'price' => $products[$pid]->getPrice(),
+                    'amount' => $item->amount,
+                    'sum' => $products[$pid]->getPrice() * $item->amount,
+                    'viewurl' => $products[$pid]->getVieUrl(),
+                    'description' => $products[$pid]->getDescription() // добавляем описание товара
+                ];
             }
         }
-        return $products;
 
+        return $result;
     }
-
 
     private function getTotal(array $products): float
     {
