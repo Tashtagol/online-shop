@@ -1,14 +1,15 @@
 <?php
 namespace Model;
 use PDO;
-class OrderProduct extends Model
+
+class OrderModel extends Model
 {
-    public int $product_id;
-    public int $order_id;
-    public int $amount;
-    public float $price;
-    public string $name;
-    public string $vieUrl;
+    private int $product_id;
+    private int $order_id;
+    private int $amount;
+    private float $price;
+    private string $name;
+    private string $viewUrl;
 
     public function __construct(array $data)
     {
@@ -17,6 +18,14 @@ class OrderProduct extends Model
         $this->amount = (int)($data['amount'] ?? 0);
         $this->price = (float)($data['price'] ?? 0);
         $this->name = $data['name'] ?? '';
-        $this->vieUrl = $data['vieUrl'] ?? '';
+        $this->viewUrl = $data['view_url'] ?? '';
     }
+
+    // 🔹 Геттеры
+    public function getProductId(): int { return $this->product_id; }
+    public function getOrderId(): int { return $this->order_id; }
+    public function getAmount(): int { return $this->amount; }
+    public function getPrice(): float { return $this->price; }
+    public function getName(): string { return $this->name; }
+    public function getViewUrl(): string { return $this->viewUrl; }
 }

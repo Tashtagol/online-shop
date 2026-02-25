@@ -5,8 +5,8 @@
         <?php foreach ($orders as $order): ?>
             <div class="order-card">
                 <div class="order-header">
-                    <span>Заказ <?php echo $order->getOrderNumber(); ?></span>
-                    <span><?php echo date('d.m.Y H:i', strtotime($order->getOrderDate())); ?></span>
+                    <span>Заказ <?= htmlspecialchars($order->getOrderNumber()) ?></span>
+                    <span><?= date('d.m.Y H:i', strtotime($order->getOrderDate())) ?></span>
                     <span class="toggle-indicator">▼</span>
                 </div>
 
@@ -14,13 +14,13 @@
                     <?php foreach ($order->getProducts() as $product): ?>
                         <div class="product-card">
                             <div class="product-image">
-                                <img src="<?php echo htmlspecialchars($product->vieUrl); ?>" alt="<?php echo htmlspecialchars($product->name); ?>">
+                                <img src="<?= htmlspecialchars($product->getViewUrl()) ?>" alt="<?= htmlspecialchars($product->getName()) ?>">
                             </div>
                             <div class="product-info">
-                                <h5><?php echo htmlspecialchars($product->name); ?></h5>
+                                <h5><?= htmlspecialchars($product->getName()) ?></h5>
                                 <div class="product-details">
-                                    <span>Кол-во: <?php echo $product->amount; ?></span>
-                                    <span>Цена: <?php echo number_format($product->price, 2); ?> ₽</span>
+                                    <span>Кол-во: <?= $product->getAmount() ?></span>
+                                    <span>Цена: <?= number_format($product->getPrice(), 2) ?> ₽</span>
                                 </div>
                             </div>
                         </div>
@@ -31,7 +31,7 @@
                     Общая сумма:
                     <?php
                     $total = array_reduce($order->getProducts(), function($sum, $p) {
-                        return $sum + ($p->price * $p->amount);
+                        return $sum + ($p->getPrice() * $p->getAmount());
                     }, 0);
                     echo number_format($total, 2);
                     ?> ₽
