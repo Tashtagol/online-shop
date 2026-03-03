@@ -3,7 +3,9 @@ namespace Controller;
 
 use Model\Product;
 use Model\UserProduct;
-
+use Request\Request;
+use Request\RegistrateRequest;
+use Request\LoginRequest;
 class ProductController
 {
     private Product $productModel;

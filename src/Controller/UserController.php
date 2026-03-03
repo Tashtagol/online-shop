@@ -3,6 +3,9 @@ namespace Controller;
 
 use Model\User;
 use Model\OrderProduct;
+use Request\RegistrateRequest;
+use Request\Request;
+use Request\LoginRequest;
 
 class UserController
 {
@@ -18,19 +21,26 @@ class UserController
         require_once './../View/registrate.php';
     }
 
-    public function handleRegistration()
+    public function handleRegistration(RegistrateRequest $request)
     {
-        $errors = $this->registrationValidate($_POST);
+        // валидация формата
+        $errors = $request->registrationValidate();
 
+        // проверка БД на уникальный email
+        if ($this->userModel->getByEmail($request->getEmail())) {
+            $errors['email'] = 'Email уже зарегистрирован';
+        }
+
+        // если есть ошибки — вернуть форму
         if (!empty($errors)) {
             require_once './../View/registrate.php';
             return;
         }
 
-        $name = $_POST['Name'];
-        $email = $_POST['email'];
-        $password = password_hash($_POST['psw'], PASSWORD_DEFAULT);
-
+        // создание пользователя
+        $name = $request->getName();
+        $email = $request->getEmail();
+        $password = password_hash($request->getPassword(), PASSWORD_DEFAULT);
         $this->userModel->create($name, $email, $password);
 
         header('Location: ./login');
@@ -42,9 +52,9 @@ class UserController
         require_once './../View/login.php';
     }
 
-    public function handleLogin()
+    public function handleLogin(LoginRequest $request)
     {
-        $errors = $this->loginValidate($_POST);
+        $errors = $request ->loginValidate();
 
         if (!empty($errors)) {
             require_once './../View/login.php';
@@ -69,36 +79,4 @@ class UserController
         exit;
     }
 
-    private function registrationValidate(array $data): array
-    {
-        $errors = [];
-
-        if (empty($data['Name'])) $errors['Name'] = 'Имя обязательно';
-
-        if (empty($data['email']) || !filter_var($data['email'], FILTER_VALIDATE_EMAIL)) {
-            $errors['email'] = 'Некорректный email';
-        } elseif ($this->userModel->getByEmail($data['email'])) {
-            $errors['email'] = 'Email уже зарегистрирован';
-        }
-
-        if (empty($data['psw']) || strlen($data['psw']) < 5) {
-            $errors['psw'] = 'Пароль должен быть минимум 5 символов';
-        }
-
-        if ($data['psw'] !== ($data['psw-repeat'] ?? null)) {
-            $errors['psw-repeat'] = 'Пароли не совпадают';
-        }
-
-        return $errors;
-    }
-
-    private function loginValidate(array $data): array
-    {
-        $errors = [];
-
-        if (empty($data['login'])) $errors['login'] = 'Введите email';
-        if (empty($data['password'])) $errors['password'] = 'Введите пароль';
-
-        return $errors;
-    }
 }

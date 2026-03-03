@@ -1,6 +1,8 @@
 <?php
 namespace Core;
 
+use Request\Request;
+
 class App
 {
     private array $routes = [];
@@ -26,23 +28,26 @@ class App
         $route = $this->routes[$requestUri][$requestMethod];
         $className =  $route['class'];
         $methodName = $route['method'];
+        $requestClass = $route['request'] ?? \Request\Request::class;
 
         $controller = new $className();
+        $request = new $requestClass($requestMethod, $requestUri, $_POST);
 
         // Если POST — передаём данные
         if ($requestMethod === 'POST') {
-            $controller->$methodName($_POST);
+            $controller->$methodName($request);
         } else {
             $controller->$methodName();
         }
     }
 
-    public function addRoute(string $requestUri, string $requestMethod,string $className,string $methodName): void
+    public function addRoute(string $requestUri, string $requestMethod,string $className,string $methodName, string $requestClass = Request :: class): void
     {
         if(!isset($this->routes[$requestUri][$requestMethod]))
         {
             $this->routes[$requestUri][$requestMethod]['class'] = $className;
             $this->routes[$requestUri][$requestMethod]['method'] = $methodName;
+            $this->routes[$requestUri][$requestMethod]['request'] = $requestClass;
         } else {
             echo "$requestMethod уже зарегестрирован для $requestUri" . "<br>";
         }

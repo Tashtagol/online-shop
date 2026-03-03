@@ -5,6 +5,9 @@ use Model\Order;
 use Model\UserProduct;
 use Model\Product;
 use Model\OrderProduct;
+use Request\Request;
+use Request\RegistrateRequest;
+use Request\LoginRequest;
 
 class OrderController
 {

@@ -8,15 +8,17 @@ use Controller\CartController;
 use Controller\OrderController;
 use Controller\ProductController;
 use Controller\UserController;
+use Request\RegistrateRequest;
+use Request\LoginRequest;
 
 Autoload::register(__DIR__ . '/../');
 
 $app = new App();
 
 $app->addRoute('/registration','GET',UserController::class,'getRegistrationForm');
-$app->addRoute('/registration','POST',UserController::class,'handleRegistration');
+$app->addRoute('/registration','POST',UserController::class,'handleRegistration',RegistrateRequest::class);
 $app->addRoute('/login','GET',UserController::class,'getLoginForm');
-$app->addRoute('/login','POST',UserController::class,'handleLogin');
+$app->addRoute('/login','POST',UserController::class,'handleLogin',LoginRequest::class);
 $app->addRoute('/catalog','GET',ProductController::class,'getProduct');
 $app->addRoute('/add-product','GET',ProductController::class,'getProductForm');
 $app->addRoute('/add-product','POST',ProductController::class,'addProduct');
