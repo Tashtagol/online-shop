@@ -8,6 +8,7 @@ class Request
     protected string $method;
     protected string $uri;
     protected array $data;
+    protected array $errors = [];
 
     public function __construct( string $uri,string $method, array $data)
     {
@@ -30,6 +31,11 @@ class Request
     {
         return $this->data;
     }
+    public function getErrors(): array
+    {
+        return $this->errors;
+    }
+
 
 }
 

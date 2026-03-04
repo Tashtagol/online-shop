@@ -8,6 +8,8 @@ use Controller\CartController;
 use Controller\OrderController;
 use Controller\ProductController;
 use Controller\UserController;
+use Request\OrderRequest;
+use Request\ProductRequest;
 use Request\RegistrateRequest;
 use Request\LoginRequest;
 
@@ -21,10 +23,10 @@ $app->addRoute('/login','GET',UserController::class,'getLoginForm');
 $app->addRoute('/login','POST',UserController::class,'handleLogin',LoginRequest::class);
 $app->addRoute('/catalog','GET',ProductController::class,'getProduct');
 $app->addRoute('/add-product','GET',ProductController::class,'getProductForm');
-$app->addRoute('/add-product','POST',ProductController::class,'addProduct');
+$app->addRoute('/add-product','POST',ProductController::class,'addProduct',ProductRequest::class);
 $app->addRoute('/cart','GET',CartController::class,'getCartForm');
 $app->addRoute('/order','GET',OrderController::class,'getOrderForm');
-$app->addRoute('/order','POST',OrderController::class,'handleOrdersForm');
+$app->addRoute('/order','POST',OrderController::class,'handleOrdersForm',OrderRequest::class);
 $app->addRoute('/order-success','GET',OrderController::class,'getSuccessPage');
 $app->addRoute('/orders','GET',OrderController::class,'getOrders');
 

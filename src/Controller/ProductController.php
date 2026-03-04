@@ -3,9 +3,8 @@ namespace Controller;
 
 use Model\Product;
 use Model\UserProduct;
-use Request\Request;
-use Request\RegistrateRequest;
-use Request\LoginRequest;
+use Request\ProductRequest;
+
 class ProductController
 {
     private Product $productModel;
@@ -30,18 +29,18 @@ class ProductController
         require_once './../View/addProduct.php';
     }
 
-    public function addProduct()
+    public function addProduct(ProductRequest $request)
     {
-        $errors = $this->validateAddProduct($_POST);
-
+        $request->validate();
+        $errors = $request->getErrors();
         if (!empty($errors)) {
             require_once './../View/addProduct.php';
             return;
         }
 
         $userId = $this->checkSession();
-        $productId = (int)$_POST['product-id'];
-        $amount = (int)$_POST['amount'];
+        $productId = $request ->getProductId();
+        $amount = $request ->getAmount();
 
         $cartItem = $this->userProductModel->getUserProduct($userId, $productId);
 
@@ -55,22 +54,8 @@ class ProductController
         exit;
     }
 
-    private function validateAddProduct(array $data): array
-    {
-        $errors = [];
 
-        if (empty($data['product-id'])) {
-            $errors['product-id'] = 'Требуется ID товара';
-        }
-
-        if (empty($data['amount']) || !is_numeric($data['amount']) || $data['amount'] < 1) {
-            $errors['amount'] = 'Количество должно быть положительным числом';
-        }
-
-        return $errors;
-    }
-
-    private function checkSession(): int
+    public function checkSession(): int
     {
         if (session_status() === PHP_SESSION_NONE) {
             session_start();

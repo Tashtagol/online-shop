@@ -5,9 +5,7 @@ use Model\Order;
 use Model\UserProduct;
 use Model\Product;
 use Model\OrderProduct;
-use Request\Request;
-use Request\RegistrateRequest;
-use Request\LoginRequest;
+use Request\OrderRequest;
 
 class OrderController
 {
@@ -40,14 +38,7 @@ class OrderController
                 if (isset($products[$pid])) {
                     $price = $products[$pid]->getPrice();
 
-                    $orderItems[] = [
-                        'product_id' => $pid,
-                        'name' => $products[$pid]->getName(),
-                        'price' => $price,
-                        'amount' => $item->amount,
-                        'sum' => $price * $item->amount,
-                        'viewurl' => $products[$pid]->getVieUrl()
-                    ];
+                    $orderItems[] = ['product_id' => $pid, 'name' => $products[$pid]->getName(), 'price' => $price, 'amount' => $item->amount, 'sum' => $price * $item->amount, 'viewurl' => $products[$pid]->getVieUrl()];
 
                     $total += $price * $item->amount;
                 }
@@ -60,11 +51,13 @@ class OrderController
         require_once './../View/order.php';
     }
 
-    public function handleOrdersForm(array $data)
+    public function handleOrdersForm(OrderRequest  $request)
     {
         $userId = $this->checkSession();
 
-        $errors = $this->validateOrderForm($data);
+        $data = $request->getData();
+        $errors = $request->validate();
+
         if (!empty($errors)) {
             return $this->getOrderForm(['errors' => $errors, 'old' => $data]);
         }
@@ -84,11 +77,7 @@ class OrderController
             if (isset($products[$pid])) {
                 $price = $products[$pid]->getPrice();
 
-                $orderItems[] = [
-                    'product_id' => $pid,
-                    'amount' => $item->amount,
-                    'price' => $price
-                ];
+                $orderItems[] = ['product_id' => $pid, 'amount' => $item->amount, 'price' => $price];
             }
         }
 
@@ -137,19 +126,6 @@ class OrderController
         }
 
         require_once './../View/orderSuccess.php';
-    }
-
-    private function validateOrderForm(array $data): array
-    {
-        $errors = [];
-
-        if (empty($data['name'])) $errors['name'] = 'Имя обязательно';
-        if (empty($data['phone'])) $errors['phone'] = 'Телефон обязателен';
-        if (empty($data['address'])) $errors['address'] = 'Адрес обязателен';
-        if (empty($data['email']) || !filter_var($data['email'], FILTER_VALIDATE_EMAIL))
-            $errors['email'] = 'Некорректный email';
-
-        return $errors;
     }
 
     private function checkSession(): int

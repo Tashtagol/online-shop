@@ -54,16 +54,17 @@ class UserController
 
     public function handleLogin(LoginRequest $request)
     {
-        $errors = $request ->loginValidate();
+        $request->loginValidate();
+        $errors = $request->getErrors();
 
         if (!empty($errors)) {
             require_once './../View/login.php';
             return;
         }
 
-        $user = $this->userModel->getByLogin($_POST['login']);
+        $user = $this->userModel->getByLogin($request->getLogin());
 
-        if (!$user || !password_verify($_POST['password'], $user->getPassword())) {
+        if (!$user || !password_verify($request->getPassword(), $user->getPassword())) {
             $errors['login'] = 'Неверный логин или пароль';
             require_once './../View/login.php';
             return;

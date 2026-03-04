@@ -39,6 +39,18 @@ class Product extends Model
 
         return $result;
     }
+    public function getProductById(int $id): ?self
+    {
+        $stmt = $this->pdo->prepare("SELECT * FROM products WHERE id = ?");
+        $stmt->execute([$id]);
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if ($row) {
+            return self::createFromData($row);
+        }
+
+        return null; // возвращаем null если продукта нет
+    }
 
     public function getProductsByIds(array $ids): array
     {

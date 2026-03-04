@@ -17,8 +17,8 @@
             <label>Enter your email</label>
         </div>
         <div class="input-field">
-            <?php echo $errors['password'] ?? ''; ?>
-            <input type="password" name = 'password' required>
+            <?php echo $errors['psw'] ?? ''; ?>
+            <input type="password" name = 'psw' required>
             <label>Enter your password</label>
         </div>
         <div class="forget">
