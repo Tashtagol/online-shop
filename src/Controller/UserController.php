@@ -7,6 +7,7 @@ use Request\RegistrateRequest;
 use Request\Request;
 use Request\LoginRequest;
 
+
 class UserController
 {
     private User $userModel;

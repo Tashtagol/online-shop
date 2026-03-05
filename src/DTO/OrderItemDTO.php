@@ -1,8 +1,9 @@
 <?php
-namespace Model;
+
+namespace DTO;
 use PDO;
 
-class OrderModel extends Model
+class OrderItemDTO
 {
     private int $product_id;
     private int $order_id;

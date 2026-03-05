@@ -1,8 +1,7 @@
 <?php
+require_once __DIR__ . '/../Core/Autoload.php';
 
-require_once './../Core/Autoload.php';
-
-Use Core\App;
+use Core\App;
 use Core\Autoload;
 use Controller\CartController;
 use Controller\OrderController;
@@ -12,11 +11,14 @@ use Request\OrderRequest;
 use Request\ProductRequest;
 use Request\RegistrateRequest;
 use Request\LoginRequest;
+use Service\OrderService;
 
+// Регистрируем автолоадер на папку src
 Autoload::register(__DIR__ . '/../');
 
 $app = new App();
 
+// маршруты
 $app->addRoute('/registration','GET',UserController::class,'getRegistrationForm');
 $app->addRoute('/registration','POST',UserController::class,'handleRegistration',RegistrateRequest::class);
 $app->addRoute('/login','GET',UserController::class,'getLoginForm');
@@ -31,5 +33,3 @@ $app->addRoute('/order-success','GET',OrderController::class,'getSuccessPage');
 $app->addRoute('/orders','GET',OrderController::class,'getOrders');
 
 $app->run();
-
-

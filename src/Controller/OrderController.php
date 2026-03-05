@@ -1,20 +1,23 @@
 <?php
 namespace Controller;
-
+use DTO\CreateOrderDTO;
 use Model\Order;
-use Model\UserProduct;
 use Model\Product;
-use Model\OrderProduct;
+use Model\UserProduct;
 use Request\OrderRequest;
+use Service\OrderService;
 
 class OrderController
 {
     private Order $orderModel;
     private UserProduct $userProductModel;
     private Product $productModel;
+    private OrderService  $orderService;
 
     public function __construct()
     {
+
+        $this->orderService = new OrderService();
         $this->orderModel = new Order();
         $this->userProductModel = new UserProduct();
         $this->productModel = new Product();
@@ -23,27 +26,9 @@ class OrderController
     public function getOrderForm(array $params = [])
     {
         $userId = $this->checkSession();
-        $userProducts = $this->userProductModel->getUserIdCart($userId);
-
-        $orderItems = [];
-        $total = 0;
-
-        if (!empty($userProducts)) {
-            $productIds = array_map(fn($item) => $item->product_id, $userProducts);
-            $products = $this->productModel->getProductsByIds($productIds);
-
-            foreach ($userProducts as $item) {
-                $pid = $item->product_id;
-
-                if (isset($products[$pid])) {
-                    $price = $products[$pid]->getPrice();
-
-                    $orderItems[] = ['product_id' => $pid, 'name' => $products[$pid]->getName(), 'price' => $price, 'amount' => $item->amount, 'sum' => $price * $item->amount, 'viewurl' => $products[$pid]->getVieUrl()];
-
-                    $total += $price * $item->amount;
-                }
-            }
-        }
+        $cartData = $this->orderService->getCartData($userId);
+        $orderItems = $cartData['items'];
+        $total = $cartData['total'];
 
         $errors = $params['errors'] ?? [];
         $old = $params['old'] ?? [];
@@ -61,30 +46,12 @@ class OrderController
         if (!empty($errors)) {
             return $this->getOrderForm(['errors' => $errors, 'old' => $data]);
         }
+        $orderDTO = new CreateOrderDTO($userId, $data['name'], $data['email'], $data['address'], $data['phone']);
+        $order = $this->orderService->create($orderDTO);
 
-        $userProducts = $this->userProductModel->getUserIdCart($userId);
-        if (empty($userProducts)) {
+        if (!$order) { // если корзина пуста
             return $this->getOrderForm(['errors' => ['cart' => 'Корзина пуста'], 'old' => $data]);
         }
-
-        $productIds = array_map(fn($item) => $item->product_id, $userProducts);
-        $products = $this->productModel->getProductsByIds($productIds);
-
-        $orderItems = [];
-        foreach ($userProducts as $item) {
-            $pid = $item->product_id;
-
-            if (isset($products[$pid])) {
-                $price = $products[$pid]->getPrice();
-
-                $orderItems[] = ['product_id' => $pid, 'amount' => $item->amount, 'price' => $price];
-            }
-        }
-
-        $order = (new Order($userId, $data['name'], $data['email'], $data['address'], $data['phone']))->saveOrder();
-
-        $order->saveOrderProductsBulk($orderItems);
-        $this->userProductModel->clearCart($userId);
 
         header("Location: /order-success?number=" . $order->getOrderNumber());
         exit;
@@ -96,7 +63,7 @@ class OrderController
         $orders = $this->orderModel->getAllByUserId($userId);
 
         // Загружаем товары для каждого заказа
-        foreach ($orders as &$order) {
+        foreach ($orders as $order) {
             $orderProducts = $order->getOrderProducts(); // Получаем товары для заказа
 
             // Если товары есть, добавляем их в заказ
@@ -105,7 +72,7 @@ class OrderController
             }
         }
 
-        require_once './../View/orders.php'; // Передаем заказы в вьюшку
+        require_once './../View/orders.php';
     }
 
     public function getSuccessPage()

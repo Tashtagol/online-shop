@@ -9,7 +9,14 @@ class CreateOrderDTO
         private string $email,
         private string $address,
         private string $phone
-    ) {}
+    )
+    {
+        $this->userId = $userId;
+        $this->name = $name;
+        $this->email = $email;
+        $this->address = $address;
+        $this->phone = $phone;
+    }
 
     public function getUserId(): int
     {

@@ -2,6 +2,7 @@
 
 namespace Model;
 
+use DTO\OrderItemDTO;
 use PDO;
 
 class Order extends Model
@@ -171,14 +172,14 @@ class Order extends Model
             if ($product) {
                 $data = ['product_id' => $pid, 'order_id' => $row['order_id'], 'amount' => $row['amount'], 'price' => $row['price'], 'name' => $product->getName(), 'view_url' => $product->getVieUrl(),];
 
-                $result[] = new OrderModel($data);
+                $result[] = new OrderItemDTO($data);
             }
         }
 
         return $result;
     }
 
-    // Для фронта: установить продукты с дополнительными полями
+
     public function setProducts(array $products): void
     {
         $this->products = $products;
