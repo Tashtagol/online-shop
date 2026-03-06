@@ -10,8 +10,7 @@ use Service\OrderService;
 class OrderController
 {
     private Order $orderModel;
-    private UserProduct $userProductModel;
-    private Product $productModel;
+
     private OrderService  $orderService;
 
     public function __construct()
@@ -19,8 +18,7 @@ class OrderController
 
         $this->orderService = new OrderService();
         $this->orderModel = new Order();
-        $this->userProductModel = new UserProduct();
-        $this->productModel = new Product();
+
     }
 
     public function getOrderForm(array $params = [])

@@ -4,16 +4,19 @@ namespace Controller;
 use Model\Product;
 use Model\UserProduct;
 use Request\ProductRequest;
+use Service\CartService;
+use Service\ProductService;
 
 class ProductController
 {
     private Product $productModel;
-    private UserProduct $userProductModel;
+
+    private ProductService $productService;
 
     public function __construct()
     {
         $this->productModel = new Product();
-        $this->userProductModel = new UserProduct();
+        $this->productService = new ProductService();
     }
 
     public function getProduct()
@@ -42,13 +45,7 @@ class ProductController
         $productId = $request ->getProductId();
         $amount = $request ->getAmount();
 
-        $cartItem = $this->userProductModel->getUserProduct($userId, $productId);
-
-        if (!$cartItem) {
-            $this->userProductModel->setUserProduct($userId, $productId, $amount);
-        } else {
-            $this->userProductModel->updateUserProduct($amount, $userId, $productId);
-        }
+       $this->productService->addProduct($userId, $productId, $amount);
 
         header("Location: /cart");
         exit;
