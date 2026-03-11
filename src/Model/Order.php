@@ -27,7 +27,6 @@ class Order extends Model
         ?string $orderNumber = null,
         ?string $orderDate = null // Параметр для даты
     ) {
-        parent::__construct();
 
         $this->userId = $userId;
         $this->name = $name;
@@ -69,7 +68,7 @@ class Order extends Model
         $orderDate = date('Y-m-d H:i:s');
 
         // Запрос на вставку данных заказа в базу данных
-        $stmt = $this->pdo->prepare(
+        $stmt = self::getPDO()->prepare(
             "INSERT INTO orders (user_id, name, email, address, telephone, order_number, order_date) VALUES (:user_id, :name, :email, :address, :telephone, :order_number, :order_date) RETURNING id, order_number, order_date");
 
         $stmt->execute([':user_id'  => $this->userId, ':name' => $this->name, ':email'=> $this->email, ':address' => $this->address, ':telephone' => $this->phone, ':order_number' => $this->orderNumber, ':order_date'=> $orderDate]);
@@ -91,7 +90,7 @@ class Order extends Model
     {
         do {
             $number = 'ORD-' . date('Y') . '-' . strtoupper(bin2hex(random_bytes(3)));
-            $stmt = $this->pdo->prepare("SELECT 1 FROM orders WHERE order_number = ?");
+            $stmt = self::getPDO()->prepare("SELECT 1 FROM orders WHERE order_number = ?");
             $stmt->execute([$number]);
         } while ($stmt->fetchColumn());
 
@@ -101,7 +100,7 @@ class Order extends Model
     // Проверка, принадлежит ли заказ пользователю
     public function orderBelongsToUser(int $orderId, int $userId): bool
     {
-        $stmt = $this->pdo->prepare("SELECT 1 FROM orders WHERE id = ? AND user_id = ?");
+        $stmt = self::getPDO()->prepare("SELECT 1 FROM orders WHERE id = ? AND user_id = ?");
         $stmt->execute([$orderId, $userId]);
 
         return (bool) $stmt->fetchColumn();
@@ -110,7 +109,7 @@ class Order extends Model
     // Получаем все заказы пользователя как объекты
     public function getAllByUserId(int $userId): array
     {
-        $stmt = $this->pdo->prepare("SELECT * FROM orders WHERE user_id = :user_id");
+        $stmt = self::getPDO()->prepare("SELECT * FROM orders WHERE user_id = :user_id");
         $stmt->execute(['user_id' => $userId]);
         $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
@@ -120,7 +119,7 @@ class Order extends Model
     // Получаем заказ по ID
     public function getById(int $orderId): ?self
     {
-        $stmt = $this->pdo->prepare("SELECT * FROM orders WHERE id = :id");
+        $stmt = self::getPDO()->prepare("SELECT * FROM orders WHERE id = :id");
         $stmt->execute(['id' => $orderId]);
         $data = $stmt->fetch(PDO::FETCH_ASSOC);
 
@@ -130,7 +129,7 @@ class Order extends Model
     // Получаем заказ по номеру
     public function getByNumber(string $number): ?self
     {
-        $stmt = $this->pdo->prepare("SELECT * FROM orders WHERE order_number = :number");
+        $stmt = self::getPDO()->prepare("SELECT * FROM orders WHERE order_number = :number");
         $stmt->execute(['number' => $number]);
         $data = $stmt->fetch(PDO::FETCH_ASSOC);
 
@@ -140,7 +139,7 @@ class Order extends Model
     // Сохраняем товары заказа в bulk
     public function saveOrderProductsBulk(array $orderItems): void
     {
-        $stmt = $this->pdo->prepare(
+        $stmt = self::getPDO()->prepare(
             "INSERT INTO order_products (order_id, product_id, amount, price) VALUES (:order_id, :product_id, :amount, :price)");
 
         foreach ($orderItems as $item) {
@@ -152,7 +151,7 @@ class Order extends Model
     public function getOrderProducts(): array
     {
         // 1️⃣ Получаем все строки из order_products
-        $stmt = $this->pdo->prepare("SELECT * FROM order_products WHERE order_id = :order_id");
+        $stmt = self::getPDO()->prepare("SELECT * FROM order_products WHERE order_id = :order_id");
         $stmt->execute(['order_id' => $this->id]);
         $orderRows = $stmt->fetchAll(PDO::FETCH_ASSOC);
 

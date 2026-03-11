@@ -5,6 +5,8 @@ use Model\Order;
 use Model\Product;
 use Model\UserProduct;
 use Request\OrderRequest;
+use Service\Auth\AuthServiceInterface;
+use Service\Auth\AuthSessionService;
 use Service\OrderService;
 
 class OrderController
@@ -12,19 +14,21 @@ class OrderController
     private Order $orderModel;
 
     private OrderService  $orderService;
+    private AuthServiceInterface $authService;
 
     public function __construct()
     {
 
         $this->orderService = new OrderService();
         $this->orderModel = new Order();
+        $this->authService = new AuthSessionService();
 
     }
 
     public function getOrderForm(array $params = [])
     {
-        $userId = $this->checkSession();
-        $cartData = $this->orderService->getCartData($userId);
+        $user = $this->checkAuth();
+        $cartData = $this->orderService->getCartData($user->getId());
         $orderItems = $cartData['items'];
         $total = $cartData['total'];
 
@@ -36,7 +40,8 @@ class OrderController
 
     public function handleOrdersForm(OrderRequest  $request)
     {
-        $userId = $this->checkSession();
+        $user = $this->checkAuth();
+        $userId = $user->getId();
 
         $data = $request->getData();
         $errors = $request->validate();
@@ -57,7 +62,8 @@ class OrderController
 
     public function getOrders(): void
     {
-        $userId = $this->checkSession();
+        $user = $this->checkAuth();
+        $userId = $user->getId();
         $orders = $this->orderModel->getAllByUserId($userId);
 
         // Загружаем товары для каждого заказа
@@ -75,7 +81,8 @@ class OrderController
 
     public function getSuccessPage()
     {
-        $userId = $this->checkSession();
+        $user = $this->checkAuth();
+        $userId = $user->getId();
         $orderNumber = $_GET['number'] ?? null;
 
         if (!$orderNumber) {
@@ -93,15 +100,13 @@ class OrderController
         require_once './../View/orderSuccess.php';
     }
 
-    private function checkSession(): int
+    private function checkAuth()
     {
-        if (session_status() === PHP_SESSION_NONE) session_start();
-
-        if (!isset($_SESSION['user_id'])) {
-            header('Location: ./login');
+        $user = $this->authService->getCurrentUser();
+        if (!$user) {
+            header("Location: /login");
             exit;
         }
-
-        return (int)$_SESSION['user_id'];
+        return $user;
     }
 }

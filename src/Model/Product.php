@@ -13,7 +13,6 @@ class Product extends Model
 
     public function __construct(int $id = 0, string $name = '', float $price = 0.0, string $viewurl = '', string $description = ''
     ) {
-        parent::__construct();
         $this->id = $id;
         $this->name = $name;
         $this->price = $price;
@@ -26,9 +25,9 @@ class Product extends Model
         return new self((int)$data['id'], $data['name'], (float)$data['price'], $data['viewurl'], $data['description']);
     }
 
-    public function getAllProducts(): array
+    public static function getAllProducts(): array
     {
-        $stmt = $this->pdo->query("SELECT * FROM products");
+        $stmt = self::getPDO()->query("SELECT * FROM products");
         $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
         $result = [];
@@ -39,9 +38,9 @@ class Product extends Model
 
         return $result;
     }
-    public function getProductById(int $id): ?self
+    public static function getProductById(int $id): ?self
     {
-        $stmt = $this->pdo->prepare("SELECT * FROM products WHERE id = ?");
+        $stmt = self::getPDO()->prepare("SELECT * FROM products WHERE id = ?");
         $stmt->execute([$id]);
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
 
@@ -52,12 +51,12 @@ class Product extends Model
         return null; // возвращаем null если продукта нет
     }
 
-    public function getProductsByIds(array $ids): array
+    public static function getProductsByIds(array $ids): array
     {
         if (empty($ids)) return [];
 
         $placeholders = implode(',', array_fill(0, count($ids), '?'));
-        $stmt = $this->pdo->prepare("SELECT * FROM products WHERE id IN ($placeholders)");
+        $stmt = self::getPDO()->prepare("SELECT * FROM products WHERE id IN ($placeholders)");
         $stmt->execute($ids);
 
         $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);

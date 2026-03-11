@@ -4,6 +4,8 @@ namespace Controller;
 use Model\Product;
 use Model\UserProduct;
 use Request\ProductRequest;
+use Service\Auth\AuthServiceInterface;
+use Service\Auth\AuthSessionService;
 use Service\CartService;
 use Service\ProductService;
 
@@ -12,11 +14,15 @@ class ProductController
     private Product $productModel;
 
     private ProductService $productService;
+    private AuthServiceInterface $authService;
+    private CartService $cartService;
 
     public function __construct()
     {
         $this->productModel = new Product();
         $this->productService = new ProductService();
+        $this->authService = new AuthSessionService();
+        $this->cartService = new CartService();
     }
 
     public function getProduct()
@@ -41,7 +47,12 @@ class ProductController
             return;
         }
 
-        $userId = $this->checkSession();
+        $user = $this->authService->getCurrentUser();
+        if (!$user) {
+            header("Location: /login");
+            exit;
+        }
+        $userId = $user->getId();
         $productId = $request ->getProductId();
         $amount = $request ->getAmount();
 
@@ -52,17 +63,11 @@ class ProductController
     }
 
 
-    public function checkSession(): int
+    private function checkSession(): void
     {
-        if (session_status() === PHP_SESSION_NONE) {
-            session_start();
-        }
-
-        if (!isset($_SESSION['user_id'])) {
-            header('Location: ./login');
+        if (!$this->authService->check()) {
+            header("Location: /login");
             exit;
         }
-
-        return (int)$_SESSION['user_id'];
     }
 }

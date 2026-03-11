@@ -3,7 +3,6 @@
 namespace Service;
 
 use Model\UserProduct;
-use Model\Product;
 
 class ProductService
 {

@@ -16,7 +16,10 @@ use Service\OrderService;
 // Регистрируем автолоадер на папку src
 Autoload::register(__DIR__ . '/../');
 
-$app = new App();
+$loggerService = new \Service\Logger\LoggerFileService();
+
+
+$app = new App($loggerService );
 
 // маршруты
 $app->addRoute('/registration','GET',UserController::class,'getRegistrationForm');

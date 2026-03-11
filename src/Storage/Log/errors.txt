@@ -1,0 +1,150 @@
+Ошибка: Too few arguments to function Controller\CartController::__construct(), 0 passed in /var/www/html/src/Core/App.php on line 41 and exactly 2 expected
+Файл: /var/www/html/src/Controller/CartController.php
+Срока: 14
+Время: 2026-03-11 14:40:37
+
+Ошибка: Too few arguments to function Controller\CartController::__construct(), 0 passed in /var/www/html/src/Core/App.php on line 41 and exactly 2 expected
+Файл: /var/www/html/src/Controller/CartController.php
+Срока: 14
+Время: 2026-03-11 14:40:39
+
+Ошибка: Too few arguments to function Controller\CartController::__construct(), 0 passed in /var/www/html/src/Core/App.php on line 41 and exactly 2 expected
+Файл: /var/www/html/src/Controller/CartController.php
+Срока: 14
+Время: 2026-03-11 14:40:47
+
+Ошибка: Too few arguments to function Controller\CartController::__construct(), 0 passed in /var/www/html/src/Core/App.php on line 41 and exactly 2 expected
+Файл: /var/www/html/src/Controller/CartController.php
+Срока: 14
+Время: 2026-03-11 14:40:47
+
+Ошибка: Too few arguments to function Controller\CartController::__construct(), 0 passed in /var/www/html/src/Core/App.php on line 41 and exactly 2 expected
+Файл: /var/www/html/src/Controller/CartController.php
+Срока: 14
+Время: 2026-03-11 14:40:47
+
+Ошибка: Too few arguments to function Controller\CartController::__construct(), 0 passed in /var/www/html/src/Core/App.php on line 41 and exactly 2 expected
+Файл: /var/www/html/src/Controller/CartController.php
+Срока: 14
+Время: 2026-03-11 14:40:48
+
+Ошибка: Too few arguments to function Controller\CartController::__construct(), 0 passed in /var/www/html/src/Core/App.php on line 41 and exactly 2 expected
+Файл: /var/www/html/src/Controller/CartController.php
+Срока: 14
+Время: 2026-03-11 15:01:30
+
+Ошибка: Too few arguments to function Controller\CartController::__construct(), 0 passed in /var/www/html/src/Core/App.php on line 41 and exactly 2 expected
+Файл: /var/www/html/src/Controller/CartController.php
+Срока: 14
+Время: 2026-03-11 15:01:31
+
+Ошибка: Too few arguments to function Controller\CartController::__construct(), 0 passed in /var/www/html/src/Core/App.php on line 41 and exactly 2 expected
+Файл: /var/www/html/src/Controller/CartController.php
+Срока: 14
+Время: 2026-03-11 15:01:31
+
+Ошибка: Too few arguments to function Controller\CartController::__construct(), 0 passed in /var/www/html/src/Core/App.php on line 41 and exactly 2 expected
+Файл: /var/www/html/src/Controller/CartController.php
+Срока: 14
+Время: 2026-03-11 15:01:31
+
+Ошибка: Too few arguments to function Controller\OrderController::__construct(), 0 passed in /var/www/html/src/Core/App.php on line 41 and exactly 2 expected
+Файл: /var/www/html/src/Controller/OrderController.php
+Срока: 18
+Время: 2026-03-11 15:10:56
+
+Ошибка: Unmatched '}'
+Файл: /var/www/html/src/Controller/CartController.php
+Срока: 43
+Время: 2026-03-11 15:35:06
+
+Ошибка: Too few arguments to function Controller\OrderController::__construct(), 0 passed in /var/www/html/src/Core/App.php on line 41 and exactly 2 expected
+Файл: /var/www/html/src/Controller/OrderController.php
+Срока: 18
+Время: 2026-03-11 15:35:26
+
+Ошибка: Too few arguments to function Controller\OrderController::__construct(), 0 passed in /var/www/html/src/Core/App.php on line 41 and exactly 2 expected
+Файл: /var/www/html/src/Controller/OrderController.php
+Срока: 19
+Время: 2026-03-11 15:36:16
+
+Ошибка: Too few arguments to function Controller\OrderController::__construct(), 0 passed in /var/www/html/src/Core/App.php on line 41 and exactly 2 expected
+Файл: /var/www/html/src/Controller/OrderController.php
+Срока: 19
+Время: 2026-03-11 15:37:15
+
+Ошибка: Too few arguments to function Controller\OrderController::__construct(), 0 passed in /var/www/html/src/Core/App.php on line 41 and exactly 2 expected
+Файл: /var/www/html/src/Controller/OrderController.php
+Срока: 19
+Время: 2026-03-11 15:55:42
+
+Ошибка: Too few arguments to function Controller\OrderController::__construct(), 0 passed in /var/www/html/src/Core/App.php on line 41 and exactly 2 expected
+Файл: /var/www/html/src/Controller/OrderController.php
+Срока: 19
+Время: 2026-03-11 15:58:19
+
+Ошибка: Too few arguments to function Controller\OrderController::__construct(), 0 passed in /var/www/html/src/Core/App.php on line 41 and exactly 2 expected
+Файл: /var/www/html/src/Controller/OrderController.php
+Срока: 19
+Время: 2026-03-11 16:12:52
+
+Ошибка: Too few arguments to function Controller\OrderController::__construct(), 0 passed in /var/www/html/src/Core/App.php on line 41 and exactly 2 expected
+Файл: /var/www/html/src/Controller/OrderController.php
+Срока: 19
+Время: 2026-03-11 16:13:03
+
+Ошибка: Too few arguments to function Controller\OrderController::__construct(), 0 passed in /var/www/html/src/Core/App.php on line 41 and exactly 2 expected
+Файл: /var/www/html/src/Controller/OrderController.php
+Срока: 19
+Время: 2026-03-11 16:16:03
+
+Ошибка: Too few arguments to function Controller\ProductController::__construct(), 0 passed in /var/www/html/src/Core/App.php on line 41 and exactly 2 expected
+Файл: /var/www/html/src/Controller/ProductController.php
+Срока: 18
+Время: 2026-03-11 16:16:04
+
+Ошибка: Too few arguments to function Controller\ProductController::__construct(), 0 passed in /var/www/html/src/Core/App.php on line 41 and exactly 2 expected
+Файл: /var/www/html/src/Controller/ProductController.php
+Срока: 18
+Время: 2026-03-11 16:16:06
+
+Ошибка: Class "Controller\AuthSessionService" not found
+Файл: /var/www/html/src/Controller/ProductController.php
+Срока: 22
+Время: 2026-03-11 16:19:02
+
+Ошибка: Class "Controller\AuthSessionService" not found
+Файл: /var/www/html/src/Controller/ProductController.php
+Срока: 22
+Время: 2026-03-11 16:19:04
+
+Ошибка: Model\UserProduct::getUserProduct(): Argument #1 ($userId) must be of type int, null given, called in /var/www/html/src/Service/ProductService.php on line 16
+Файл: /var/www/html/src/Model/UserProduct.php
+Срока: 8
+Время: 2026-03-11 16:19:35
+
+Ошибка: Model\UserProduct::getUserProduct(): Argument #1 ($userId) must be of type int, Model\User given, called in /var/www/html/src/Service/ProductService.php on line 16
+Файл: /var/www/html/src/Model/UserProduct.php
+Срока: 8
+Время: 2026-03-11 16:27:11
+
+Ошибка: DTO\CreateOrderDTO::__construct(): Argument #1 ($userId) must be of type int, null given, called in /var/www/html/src/Controller/OrderController.php on line 51
+Файл: /var/www/html/src/DTO/CreateOrderDTO.php
+Срока: 6
+Время: 2026-03-11 16:32:39
+
+Ошибка: Model\Order::getAllByUserId(): Argument #1 ($userId) must be of type int, null given, called in /var/www/html/src/Controller/OrderController.php on line 65
+Файл: /var/www/html/src/Model/Order.php
+Срока: 110
+Время: 2026-03-11 16:32:44
+
+Ошибка: Call to undefined method Controller\OrderController::checkSession()
+Файл: /var/www/html/src/Controller/OrderController.php
+Срока: 65
+Время: 2026-03-11 16:46:21
+
+Ошибка: Call to a member function getId() on null
+Файл: /var/www/html/src/Controller/OrderController.php
+Срока: 66
+Время: 2026-03-11 16:48:07
+

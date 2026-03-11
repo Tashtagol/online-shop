@@ -1,41 +1,42 @@
 <?php
 namespace Controller;
 
+use Service\Auth\AuthSessionService;
+use Service\Auth\AuthServiceInterface;
 use Service\CartService;
 
 
 class CartController
 {
     private CartService $cartService;
+    private AuthServiceInterface $authService;
 
     public function __construct()
     {
         $this->cartService = new CartService();
-
+        $this->authService = new AuthSessionService();
     }
 
     public function getCartForm()
     {
-        $userId = $this->checkSession();
-        $products = $this->cartService->getCart($userId);
+        $user = $this->checkAuth();
+        if (!$user) {
+            header("Location: ./login");
+            exit;
+        }
+        $products = $this->cartService->getCart($user->getId());
         $total = $this->cartService->getTotal($products);
 
         require_once './../View/cart.php';
     }
 
-
-
-    private function checkSession(): int
+    private function checkAuth()
     {
-        if (session_status() === PHP_SESSION_NONE) {
-            session_start();
-        }
-
-        if (!isset($_SESSION['user_id'])) {
-            header('Location: ./login');
+        $user = $this->authService->getCurrentUser();
+        if (!$user) {
+            header("Location: /login");
             exit;
         }
-
-        return (int)$_SESSION['user_id'];
+        return $user;
     }
 }

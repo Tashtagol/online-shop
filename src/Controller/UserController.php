@@ -6,15 +6,19 @@ use Model\OrderProduct;
 use Request\RegistrateRequest;
 use Request\Request;
 use Request\LoginRequest;
+use Service\Auth\AuthServiceInterface;
+use Service\Auth\AuthSessionService;
 
 
 class UserController
 {
     private User $userModel;
+    private AuthServiceInterface $authService;
 
     public function __construct()
     {
         $this->userModel = new User();
+        $this->authService = new AuthSessionService();
     }
 
     public function getRegistrationForm()

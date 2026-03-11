@@ -2,10 +2,17 @@
 namespace Core;
 
 use Request\Request;
+use Service\Logger\LoggerServiceInterface;
 
 class App
 {
+    private LoggerServiceInterface $loggerService;
     private array $routes = [];
+
+    public function __construct(LoggerServiceInterface $loggerService)
+    {
+        $this->loggerService = $loggerService;
+    }
 
     public function run()
     {
@@ -25,19 +32,26 @@ class App
             return;
         }
 
-        $route = $this->routes[$requestUri][$requestMethod];
-        $className =  $route['class'];
-        $methodName = $route['method'];
-        $requestClass = $route['request'] ?? \Request\Request::class;
+        try {
+            $route = $this->routes[$requestUri][$requestMethod];
+            $className = $route['class'];
+            $methodName = $route['method'];
+            $requestClass = $route['request'] ?? \Request\Request::class;
 
-        $controller = new $className();
-        $request = new $requestClass($requestMethod, $requestUri, $_POST);
+            $controller = new $className();
+            $request = new $requestClass($requestMethod, $requestUri, $_POST);
 
-        // Если POST — передаём данные
-        if ($requestMethod === 'POST') {
-            $controller->$methodName($request);
-        } else {
-            $controller->$methodName();
+            // Вызов метода контроллера
+            if ($requestMethod === 'POST') {
+                $controller->$methodName($request);
+            } else {
+                $controller->$methodName();
+            }
+
+        } catch (\Throwable $exception) {
+            $this->loggerService->error($exception);
+            http_response_code(500);
+            require_once './../View/500.php';
         }
     }
 

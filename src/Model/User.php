@@ -3,6 +3,8 @@ namespace Model;
 
 use PDO;
 
+
+
 class User extends Model
 {
     private ?int $id = null;
@@ -16,7 +18,6 @@ class User extends Model
         string $email = '',
         string $password = ''
     ) {
-        parent::__construct();
         $this->id = $id;
         $this->name = $name;
         $this->email = $email;
@@ -25,18 +26,14 @@ class User extends Model
 
     public static function createFromData(array $data): self
     {
-        return new self(
-            (int)$data['id'],
-            $data['name'],
-            $data['email'],
-            $data['password']
-        );
+        return new self((int)$data['id'], $data['name'], $data['email'], $data['password']);
     }
 
-    public function create(string $name, string $email, string $password): self
+    public static  function create(string $name, string $email, string $password): self
     {
-        $stmt = $this->pdo->prepare(
-            "INSERT INTO users (name, email, password)VALUES (:name, :email, :password)RETURNING id, name, email, password");
+        $password = password_hash($password, PASSWORD_DEFAULT);
+
+        $stmt = self::getPDO()->prepare("INSERT INTO users (name, email, password)VALUES (:name, :email, :password)RETURNING id, name, email, password");
 
         $stmt->execute(['name' => $name, 'email' => $email, 'password' => $password]);
 
@@ -45,9 +42,9 @@ class User extends Model
         return self::createFromData($data);
     }
 
-    public function getByEmail(string $email): ?self
+    public static function getByEmail(string $email): ?self
     {
-        $stmt = $this->pdo->prepare("SELECT * FROM users WHERE email = :email");
+        $stmt = self::getPDO()->prepare("SELECT * FROM users WHERE email = :email");
         $stmt->execute(['email' => $email]);
 
         $data = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -55,9 +52,18 @@ class User extends Model
         return $data ? self::createFromData($data) : null;
     }
 
-    public function getByLogin(string $login): ?self
+    public static function getByLogin(string $login): ?self
     {
-        return $this->getByEmail($login);
+        return self::getByEmail($login);
+    }
+    public static function getById(string $userId): ?self
+    {
+        $stmt = self::getPDO()->prepare("SELECT * FROM users WHERE id = :id");
+        $stmt->execute(['id' => $userId]);
+
+        $data = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        return $data ? self::createFromData($data) : null;
     }
 
     public function getId(): ?int { return $this->id; }
