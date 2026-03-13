@@ -353,3 +353,63 @@
 Срока: 22
 Время: 2026-03-12 19:35:45
 
+Ошибка: Call to undefined method Service\CartService::getProductById()
+Файл: /var/www/html/src/Service/CartService.php
+Срока: 72
+Время: 2026-03-13 14:04:38
+
+Ошибка: Call to undefined method Service\CartService::getProductById()
+Файл: /var/www/html/src/Service/CartService.php
+Срока: 72
+Время: 2026-03-13 14:04:44
+
+Ошибка: Call to undefined method Service\CartService::getProductById()
+Файл: /var/www/html/src/Service/CartService.php
+Срока: 72
+Время: 2026-03-13 14:06:13
+
+Ошибка: Cannot use object of type Model\Product as array
+Файл: /var/www/html/src/Service/CartService.php
+Срока: 75
+Время: 2026-03-13 14:06:58
+
+Ошибка: Cannot use object of type Model\Product as array
+Файл: /var/www/html/src/Service/CartService.php
+Срока: 79
+Время: 2026-03-13 14:07:48
+
+Ошибка: Call to undefined method Service\CartService::getCart()
+Файл: /var/www/html/src/Controller/CartController.php
+Срока: 23
+Время: 2026-03-13 15:01:23
+
+Ошибка: Call to undefined method Service\CartService::getCart()
+Файл: /var/www/html/src/Controller/CartController.php
+Срока: 23
+Время: 2026-03-13 15:01:25
+
+Ошибка: Call to undefined method Service\CartService::getCart()
+Файл: /var/www/html/src/Controller/CartController.php
+Срока: 23
+Время: 2026-03-13 15:03:17
+
+Ошибка: syntax error, unexpected variable "$result"
+Файл: /var/www/html/src/Model/Product.php
+Срока: 65
+Время: 2026-03-13 15:22:22
+
+Ошибка: syntax error, unexpected token "<", expecting end of file
+Файл: /var/www/html/src/View/order.php
+Срока: 67
+Время: 2026-03-13 15:27:01
+
+Ошибка: Service\CartService::getCart(): Return value must be of type array, none returned
+Файл: /var/www/html/src/Service/CartService.php
+Срока: 43
+Время: 2026-03-13 15:36:31
+
+Ошибка: Unclosed '{' on line 13
+Файл: /var/www/html/src/Service/OrderService.php
+Срока: 105
+Время: 2026-03-13 15:50:35
+
