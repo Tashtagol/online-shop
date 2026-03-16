@@ -413,3 +413,247 @@
 Срока: 105
 Время: 2026-03-13 15:50:35
 
+Ошибка: Call to undefined method Controller\ProductController::checkAuth()
+Файл: /var/www/html/src/View/Catalog.php
+Срока: 3
+Время: 2026-03-16 13:36:00
+
+Ошибка: SQLSTATE[42804]: Datatype mismatch: 7 ERROR:  argument of JOIN/ON must be type boolean, not type integer
+LINE 2:         FROM user_product INNER JOIN products ON user_produc...
+                                                         ^
+Файл: /var/www/html/src/Model/UserProduct.php
+Срока: 43
+Время: 2026-03-16 16:46:53
+
+Ошибка: SQLSTATE[42804]: Datatype mismatch: 7 ERROR:  argument of JOIN/ON must be type boolean, not type integer
+LINE 2:         FROM user_product INNER JOIN products ON user_produc...
+                                                         ^
+Файл: /var/www/html/src/Model/UserProduct.php
+Срока: 43
+Время: 2026-03-16 16:46:56
+
+Ошибка: SQLSTATE[42804]: Datatype mismatch: 7 ERROR:  argument of JOIN/ON must be type boolean, not type integer
+LINE 2:         FROM user_product INNER JOIN products ON user_produc...
+                                                         ^
+Файл: /var/www/html/src/Model/UserProduct.php
+Срока: 43
+Время: 2026-03-16 16:47:01
+
+Ошибка: SQLSTATE[42804]: Datatype mismatch: 7 ERROR:  argument of JOIN/ON must be type boolean, not type integer
+LINE 2:         FROM user_product INNER JOIN products ON user_produc...
+                                                         ^
+Файл: /var/www/html/src/Model/UserProduct.php
+Срока: 43
+Время: 2026-03-16 16:49:23
+
+Ошибка: SQLSTATE[42804]: Datatype mismatch: 7 ERROR:  argument of JOIN/ON must be type boolean, not type integer
+LINE 2:         FROM user_product INNER JOIN products ON user_produc...
+                                                         ^
+Файл: /var/www/html/src/Model/UserProduct.php
+Срока: 43
+Время: 2026-03-16 16:49:23
+
+Ошибка: SQLSTATE[42804]: Datatype mismatch: 7 ERROR:  argument of JOIN/ON must be type boolean, not type integer
+LINE 2:         FROM user_product INNER JOIN products ON user_produc...
+                                                         ^
+Файл: /var/www/html/src/Model/UserProduct.php
+Срока: 43
+Время: 2026-03-16 16:49:23
+
+Ошибка: SQLSTATE[42804]: Datatype mismatch: 7 ERROR:  argument of JOIN/ON must be type boolean, not type integer
+LINE 2:         FROM user_product INNER JOIN products ON user_produc...
+                                                         ^
+Файл: /var/www/html/src/Model/UserProduct.php
+Срока: 43
+Время: 2026-03-16 16:49:23
+
+Ошибка: SQLSTATE[42804]: Datatype mismatch: 7 ERROR:  argument of JOIN/ON must be type boolean, not type integer
+LINE 2:         FROM user_product INNER JOIN products ON user_produc...
+                                                         ^
+Файл: /var/www/html/src/Model/UserProduct.php
+Срока: 43
+Время: 2026-03-16 16:49:24
+
+Ошибка: SQLSTATE[42703]: Undefined column: 7 ERROR:  column products.view_url does not exist
+LINE 1: ...,user_product.amount,products.name,products.price,products.v...
+                                                             ^
+HINT:  Perhaps you meant to reference the column "products.viewurl".
+Файл: /var/www/html/src/Model/UserProduct.php
+Срока: 43
+Время: 2026-03-16 16:51:38
+
+Ошибка: Cannot use object of type stdClass as array
+Файл: /var/www/html/src/Service/CartService.php
+Срока: 18
+Время: 2026-03-16 16:52:18
+
+Ошибка: Cannot use object of type stdClass as array
+Файл: /var/www/html/src/Service/CartService.php
+Срока: 18
+Время: 2026-03-16 16:52:20
+
+Ошибка: Cannot use object of type stdClass as array
+Файл: /var/www/html/src/Service/CartService.php
+Срока: 18
+Время: 2026-03-16 16:54:59
+
+Ошибка: Cannot use object of type stdClass as array
+Файл: /var/www/html/src/Service/CartService.php
+Срока: 18
+Время: 2026-03-16 16:55:02
+
+Ошибка: Cannot use object of type stdClass as array
+Файл: /var/www/html/src/Service/CartService.php
+Срока: 18
+Время: 2026-03-16 16:55:04
+
+Ошибка: Cannot use object of type stdClass as array
+Файл: /var/www/html/src/Service/CartService.php
+Срока: 18
+Время: 2026-03-16 16:55:28
+
+Ошибка: Unclosed '{' on line 13
+Файл: /var/www/html/src/Service/OrderService.php
+Срока: 104
+Время: 2026-03-16 17:16:20
+
+Ошибка: Class "Service\CartItem" not found
+Файл: /var/www/html/src/Service/CartService.php
+Срока: 21
+Время: 2026-03-16 17:37:16
+
+Ошибка: Cannot use object of type Model\CartItem as array
+Файл: /var/www/html/src/Controller/CartController.php
+Срока: 32
+Время: 2026-03-16 17:38:11
+
+Ошибка: Cannot use object of type Model\CartItem as array
+Файл: /var/www/html/src/Controller/CartController.php
+Срока: 32
+Время: 2026-03-16 17:40:33
+
+Ошибка: Cannot use object of type Model\CartItem as array
+Файл: /var/www/html/src/Controller/CartController.php
+Срока: 32
+Время: 2026-03-16 17:40:34
+
+Ошибка: Cannot use object of type Model\CartItem as array
+Файл: /var/www/html/src/Controller/CartController.php
+Срока: 32
+Время: 2026-03-16 17:40:34
+
+Ошибка: Cannot use object of type Model\CartItem as array
+Файл: /var/www/html/src/Controller/CartController.php
+Срока: 32
+Время: 2026-03-16 17:41:15
+
+Ошибка: Cannot use object of type Model\CartItem as array
+Файл: /var/www/html/src/Controller/CartController.php
+Срока: 32
+Время: 2026-03-16 17:41:15
+
+Ошибка: Call to undefined method Model\Product::getViewUrl()
+Файл: /var/www/html/src/Service/CartService.php
+Срока: 24
+Время: 2026-03-16 17:42:39
+
+Ошибка: Call to undefined method Model\Product::getViewUrl()
+Файл: /var/www/html/src/Service/CartService.php
+Срока: 24
+Время: 2026-03-16 17:42:40
+
+Ошибка: Call to undefined method Model\Product::getViewUrl()
+Файл: /var/www/html/src/Service/CartService.php
+Срока: 24
+Время: 2026-03-16 17:42:40
+
+Ошибка: Cannot use object of type Model\CartItem as array
+Файл: /var/www/html/src/Controller/CartController.php
+Срока: 32
+Время: 2026-03-16 17:43:41
+
+Ошибка: Cannot use object of type Model\CartItem as array
+Файл: /var/www/html/src/Controller/CartController.php
+Срока: 32
+Время: 2026-03-16 17:46:37
+
+Ошибка: Cannot use object of type Model\CartItem as array
+Файл: /var/www/html/src/Controller/CartController.php
+Срока: 32
+Время: 2026-03-16 17:46:37
+
+Ошибка: Cannot use object of type Model\CartItem as array
+Файл: /var/www/html/src/Controller/CartController.php
+Срока: 32
+Время: 2026-03-16 17:46:38
+
+Ошибка: Cannot use object of type Model\CartItem as array
+Файл: /var/www/html/src/Controller/CartController.php
+Срока: 32
+Время: 2026-03-16 17:46:38
+
+Ошибка: Cannot use object of type Model\CartItem as array
+Файл: /var/www/html/src/Controller/CartController.php
+Срока: 32
+Время: 2026-03-16 17:46:46
+
+Ошибка: Cannot use object of type Model\CartItem as array
+Файл: /var/www/html/src/Controller/CartController.php
+Срока: 32
+Время: 2026-03-16 17:46:57
+
+Ошибка: Cannot use object of type Model\CartItem as array
+Файл: /var/www/html/src/Controller/CartController.php
+Срока: 32
+Время: 2026-03-16 17:52:49
+
+Ошибка: Cannot use object of type Model\CartItem as array
+Файл: /var/www/html/src/Controller/CartController.php
+Срока: 59
+Время: 2026-03-16 17:54:06
+
+Ошибка: Cannot use object of type Model\CartItem as array
+Файл: /var/www/html/src/Controller/CartController.php
+Срока: 59
+Время: 2026-03-16 17:54:15
+
+Ошибка: Cannot use object of type Model\CartItem as array
+Файл: /var/www/html/src/Service/CartService.php
+Срока: 37
+Время: 2026-03-16 17:54:17
+
+Ошибка: Cannot use object of type Model\CartItem as array
+Файл: /var/www/html/src/Service/CartService.php
+Срока: 37
+Время: 2026-03-16 17:54:20
+
+Ошибка: Cannot use object of type Model\CartItem as array
+Файл: /var/www/html/src/Controller/CartController.php
+Срока: 59
+Время: 2026-03-16 17:55:44
+
+Ошибка: Cannot use object of type Model\CartItem as array
+Файл: /var/www/html/src/Service/CartService.php
+Срока: 37
+Время: 2026-03-16 18:00:41
+
+Ошибка: Cannot use object of type Model\CartItem as array
+Файл: /var/www/html/src/Service/CartService.php
+Срока: 37
+Время: 2026-03-16 18:00:43
+
+Ошибка: Cannot use object of type Model\CartItem as array
+Файл: /var/www/html/src/Service/CartService.php
+Срока: 37
+Время: 2026-03-16 18:01:44
+
+Ошибка: Cannot use object of type Model\CartItem as array
+Файл: /var/www/html/src/View/cart.php
+Срока: 12
+Время: 2026-03-16 18:02:29
+
+Ошибка: Call to undefined method Model\Product::getViewUrl()
+Файл: /var/www/html/src/Service/OrderService.php
+Срока: 89
+Время: 2026-03-16 18:12:27
+
