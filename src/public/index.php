@@ -57,10 +57,11 @@ $app->addRoute('/registration','GET',UserController::class,'getRegistrationForm'
 $app->addRoute('/registration','POST',UserController::class,'handleRegistration',RegistrateRequest::class);
 $app->addRoute('/login','GET',UserController::class,'getLoginForm');
 $app->addRoute('/login','POST',UserController::class,'handleLogin',LoginRequest::class);
-$app->addRoute('/catalog','GET',ProductController::class,'getProduct');
+$app->addRoute('/catalog','GET',CartController::class,'getCatalogForm');
 $app->addRoute('/add-product','GET',ProductController::class,'getProductForm');
 $app->addRoute('/add-product','POST',ProductController::class,'addProduct',ProductRequest::class);
 $app->addRoute('/cart','GET',CartController::class,'getCartForm');
+$app->addRoute('/cart/clear','POST',CartController::class,'clearCart');
 $app->addRoute('/cart', 'POST', CartController::class, 'addOrUpdate');
 $app->addRoute('/order','GET',OrderController::class,'getOrderForm');
 $app->addRoute('/order','POST',OrderController::class,'handleOrdersForm',OrderRequest::class);

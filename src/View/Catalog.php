@@ -2,9 +2,10 @@
     <h3>Каталог товаров</h3>
 
     <div class="top-buttons">
-        <a href="/cart" class="add-orders-btn">🛒 Моя корзина</a>
+        <a href="/cart" class="add-orders-btn">
+            🛒 Моя корзина (<span id="cart-count"><?= $cartCount ?? 0 ?></span>)
+        </a>
         <a href="/orders" class="my-orders-btn">📦 Мои заказы</a>
-        <a href="/add-product" class="add-product-btn">Добавить товар</a>
     </div>
 
     <div class="product-grid">
@@ -42,19 +43,9 @@
     h3 { text-align:center; margin-bottom:20px; color:#333; }
 
     .top-buttons { display:flex; justify-content:center; gap:15px; margin-bottom:30px; }
-    .add-orders-btn, .add-product-btn, .my-orders-btn {
-        padding:10px 20px;
-        color:white;
-        border-radius:5px;
-        font-weight:bold;
-        text-decoration:none;
-    }
-    .add-orders-btn { background:#F2994A; }
-    .add-orders-btn:hover { background:#d87d2a; }
-    .add-product-btn { background:#04AA6D; }
-    .add-product-btn:hover { background:#039c64; }
-    .my-orders-btn { background:#6366F1; }
-    .my-orders-btn:hover { background:#4F46E5; }
+    .add-orders-btn, .my-orders-btn { padding:10px 20px; color:white; border-radius:5px; font-weight:bold; text-decoration:none; }
+    .add-orders-btn { background:#F2994A; } .add-orders-btn:hover { background:#d87d2a; }
+    .my-orders-btn { background:#6366F1; } .my-orders-btn:hover { background:#4F46E5; }
 
     .product-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(260px,1fr)); gap:25px; }
     .product-card { background:white; border-radius:22px; box-shadow:0 20px 50px rgba(0,0,0,0.1); overflow:hidden; display:flex; flex-direction:column; transition:transform 0.3s; }
@@ -81,7 +72,6 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', () => {
-        // Кнопки +/-
         document.querySelectorAll('.product-card').forEach(card => {
             const minus = card.querySelector('.minus');
             const plus = card.querySelector('.plus');
@@ -89,7 +79,7 @@
 
             minus.addEventListener('click', () => {
                 let val = parseInt(input.value) || 1;
-                if (val > 1) input.value = val - 1;
+                if(val > 1) input.value = val - 1;
             });
 
             plus.addEventListener('click', () => {
@@ -98,7 +88,6 @@
             });
         });
 
-        // Ajax добавление
         document.querySelectorAll('.ajax-add').forEach(btn => {
             btn.addEventListener('click', async function() {
                 const card = this.closest('.product-card');
@@ -108,19 +97,19 @@
 
                 try {
                     const res = await fetch('/cart', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ product_id: productId, amount })
+                        method:'POST',
+                        headers:{'Content-Type':'application/json'},
+                        body:JSON.stringify({ product_id:productId, amount, source:'catalog' })
                     });
-
                     const data = await res.json();
-                    if (res.ok && data.success) {
-                        msg.style.display = 'block';
-                        setTimeout(() => msg.style.display = 'none', 1000);
-                    } else {
+                    if(res.ok && data.success){
+                        msg.style.display='block';
+                        document.getElementById('cart-count').textContent = data.count;
+                        setTimeout(()=>msg.style.display='none',1000);
+                    }else{
                         alert('Ошибка при добавлении в корзину');
                     }
-                } catch (e) {
+                } catch(e){
                     alert('Ошибка сети');
                 }
             });

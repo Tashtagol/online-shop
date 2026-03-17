@@ -1,5 +1,5 @@
 <?php
-$total = 0;
+$total = 0;  // Переменная для общей суммы заказа
 ?>
 
 <header class="checkout-header">
@@ -11,6 +11,7 @@ $total = 0;
 
         <form action="/order" method="post" class="checkout-form">
 
+            <!-- Форма для данных покупателя -->
             <div class="form-grid">
                 <div class="form-group">
                     <label for="name">Имя</label>
@@ -58,11 +59,12 @@ $total = 0;
                 </div>
             </div>
 
+            <!-- Товары в заказе -->
             <div class="checkout-items">
                 <h4>Товары в заказе:</h4>
                 <div class="checkout-item-list">
                     <?php foreach ($orderItems as $item):
-                        $total += $item['sum'];
+                        $total += $item['sum'];  // Суммируем итоговую стоимость товаров
                         ?>
                         <div class="checkout-item">
                             <div class="checkout-img">
@@ -70,19 +72,21 @@ $total = 0;
                             </div>
                             <div class="item-info">
                                 <span class="item-name"><?= htmlspecialchars($item['name']) ?></span>
-                                <span class="item-amount"><?= $item['amount'] ?> шт × <?= number_format($item['price'],2) ?> ₽</span>
-                                <span class="item-subtotal"><?= number_format($item['sum'],2) ?> ₽</span>
+                                <span class="item-amount"><?= $item['amount'] ?> шт × <?= number_format($item['price'], 2) ?> ₽</span>
+                                <span class="item-subtotal"><?= number_format($item['sum'], 2) ?> ₽</span>
                             </div>
                         </div>
                     <?php endforeach; ?>
                 </div>
             </div>
 
+            <!-- Общая сумма -->
             <div class="checkout-total">
                 <span>Общая сумма:</span>
-                <strong><?= number_format($total,2) ?> ₽</strong>
+                <strong><?= number_format($total, 2) ?> ₽</strong>  <!-- Выводим общую сумму заказа -->
             </div>
 
+            <!-- Кнопка подтверждения заказа -->
             <button class="btn-submit" type="submit">Подтвердить заказ</button>
         </form>
 

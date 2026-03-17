@@ -23,15 +23,22 @@ class UserProduct extends Model
 
     public static function updateUserProduct(int $amount, int $userId, int $productId): void
     {
-        // Устанавливаем точное количество товара
-        $stmt = self::getPDO()->prepare("UPDATE user_product SET amount = :amount WHERE user_id = :user_id AND product_id = :product_id");
-
-        $stmt->execute(['amount' => $amount, 'user_id' => $userId, 'product_id' => $productId]);
+        // Если количество = 0, удаляем товар из корзины
+        if ($amount <= 0) {
+            self::clearCartItem($userId, $productId);
+        } else {
+            // Обновляем количество товара
+            $stmt = self::getPDO()->prepare("UPDATE user_product SET amount = :amount WHERE user_id = :user_id AND product_id = :product_id");
+            $stmt->execute(['amount' => $amount, 'user_id' => $userId, 'product_id' => $productId]);
+        }
     }
 
     public static function getUserIdCart(int $userId): array
     {
-        $stmt = self::getPDO()->prepare("SELECT product_id, amount FROM user_product WHERE user_id = :user_id");
+        $stmt = self::getPDO()->prepare("SELECT user_product.product_id,user_product.amount,products.name,products.price,products.viewurl,products.description 
+        FROM user_product INNER JOIN products ON user_product.product_id = products.id
+        WHERE user_product.user_id= :user_id
+        ORDER BY products.name");
 
         $stmt->execute(['user_id' => $userId]);
 

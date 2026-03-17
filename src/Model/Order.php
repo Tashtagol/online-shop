@@ -129,35 +129,27 @@ class Order extends Model
         if ($this->products) {
             return $this->products;
         }
-
-        $stmt = self::getPDO()->prepare("SELECT * FROM order_products WHERE order_id = :order_id");
+        $stmt = self::getPDO()->prepare("SELECT order_products.order_id,order_products.product_id,order_products.amount,order_products.price,products.name,products.viewurl,products.description
+         FROM order_products INNER JOIN products ON order_products.product_id = products.id
+         WHERE order_products.order_id = :order_id
+         ORDER BY products.id");
         $stmt->execute(['order_id' => $this->id]);
-        $orderRows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $orderRows = $stmt->fetchAll(\PDO::FETCH_ASSOC);
 
         if (!$orderRows) return [];
-
-        $productIds = array_column($orderRows, 'product_id');
-        $products = (new Product())->getProductsByIds($productIds);
-
         $result = [];
         foreach ($orderRows as $row) {
-            $pid = $row['product_id'];
-            $product = $products[$pid] ?? null;
-
-            if ($product) {
                 $data = [
-                    'product_id' => $pid,
+                    'product_id' => $row['product_id'],
                     'order_id' => $row['order_id'],
                     'amount' => $row['amount'],
                     'price' => $row['price'],
-                    'name' => $product->getName(),
-                    'view_url' => $product->getVieUrl(),
+                    'name' => $row->getName(),
+                    'view_url' => $row->getVieUrl(),
+                    'description' => $row->getDescription()
                 ];
-
                 $result[] = new OrderItemDTO($data);
             }
-        }
-
         $this->products = $result;
         return $result;
     }
@@ -178,17 +170,44 @@ class Order extends Model
     }
 
     // Геттеры
-    public function getId(): ?int { return $this->id; }
-    public function getUserId(): int { return $this->userId; }
-    public function getName(): string { return $this->name; }
-    public function getEmail(): string { return $this->email; }
-    public function getAddress(): string { return $this->address; }
-    public function getPhone(): string { return $this->phone; }
-    public function getOrderNumber(): ?string { return $this->orderNumber; }
-    public function getOrderDate(): ?string { return $this->orderDate; }
+    public function getId(): ?int
+    {
+        return $this->id;
+    }
+    public function getUserId(): int
+    {
+        return $this->userId;
+    }
+    public function getName(): string
+    { return
+        $this->name;
+    }
+    public function getEmail(): string
+    {
+        return $this->email;
+    }
+    public function getAddress(): string
+    {
+        return $this->address;
+    }
+    public function getPhone(): string
+    {
+        return $this->phone;
+    }
+    public function getOrderNumber(): ?string
+    {
+        return $this->orderNumber;
+    }
+    public function getOrderDate(): ?string
+    {
+        return $this->orderDate;
+    }
 
     // Можно вручную установить продукты
-    public function setProducts(array $products): void { $this->products = $products; }
+    public function setProducts(array $products): void
+    {
+        $this->products = $products;
+    }
     public function getProducts(): array
     {
         return $this->products;

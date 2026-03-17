@@ -54,13 +54,11 @@ class Product extends Model
     public static function getProductsByIds(array $ids): array
     {
         if (empty($ids)) return [];
-
         $placeholders = implode(',', array_fill(0, count($ids), '?'));
         $stmt = self::getPDO()->prepare("SELECT * FROM products WHERE id IN ($placeholders)");
         $stmt->execute($ids);
 
         $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
         $result = [];
         foreach ($rows as $row) {
             $product = self::createFromData($row);

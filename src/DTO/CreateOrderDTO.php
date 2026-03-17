@@ -11,14 +11,7 @@ class CreateOrderDTO
         private string $phone,
         private string $payment,
     )
-    {
-        $this->userId = $userId;
-        $this->name = $name;
-        $this->email = $email;
-        $this->address = $address;
-        $this->phone = $phone;
-        $this->payment = $payment;
-    }
+    {}
 
     public function getUserId(): int
     {

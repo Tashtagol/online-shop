@@ -7,6 +7,7 @@ use Model\Order;
 use Model\Product;
 use Model\UserProduct;
 use DTO\CreateOrderDTO;
+use Model\CartItem;
 
 
 class OrderService
@@ -59,36 +60,47 @@ class OrderService
 
     public function getCartData(int $userId): array
     {
-        UserProduct::getUserIdCart($userId);
+        // Получаем все товары из корзины пользователя
+        $userProducts = UserProduct::getUserIdCart($userId);
+
+        if (empty($userProducts)) {
+            return ['items' => [], 'total' => 0];  // Если корзина пуста, сразу возвращаем пустой массив
+        }
 
         $orderItems = [];
         $total = 0;
 
-        if (!empty($userProducts)) {
-            $productIds = array_map(fn($item) => $item->product_id, $userProducts);
-            Product::getProductsByIds($productIds);
+        // Перебираем товары в корзине и создаем CartItem для каждого
+        foreach ($userProducts as $item) {
+            // Создаем объект CartItem
+            $cartItem = new CartItem(
+                $item->product_id,     // ID товара
+                $item->name,           // Название товара
+                $item->price,          // Цена товара
+                $item->amount,         // Количество товара
+                $item->viewurl,        // URL изображения товара
+                $item->description     // Описание товара
+            );
 
-            foreach ($userProducts as $item) {
-                $pid = $item->product_id;
+            // Добавляем CartItem в итоговый массив
+            $orderItems[] = [
+                'product_id' => $cartItem->getId(),
+                'name' => $cartItem->getName(),
+                'price' => $cartItem->getPrice(),
+                'amount' => $cartItem->getAmount(),
+                'sum' => $cartItem->getSum(),
+                'viewurl' => $cartItem->getViewUrl(),
+                'description' => $cartItem->getDescription(),
+            ];
 
-                if (isset($products[$pid])) {
-                    $price = $products[$pid]->getPrice();
-
-                    $orderItems[] = [
-                        'product_id' => $pid,
-                        'name' => $products[$pid]->getName(),
-                        'price' => $price,
-                        'amount' => $item->amount,
-                        'sum' => $price * $item->amount,
-                        'viewurl' => $products[$pid]->getVieUrl()
-                    ];
-
-                    $total += $price * $item->amount;
-                }
-            }
+            // Суммируем общую стоимость
+            $total += $cartItem->getSum();
         }
 
-        return ['items' => $orderItems, 'total' => $total];
+        // Возвращаем итоговые данные
+        return [
+            'items' => $orderItems,
+            'total' => $total
+        ];
     }
-
 }

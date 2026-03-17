@@ -72,12 +72,13 @@ class UserController
             return;
         }
 
-        if (session_status() === PHP_SESSION_NONE) {
-            session_start();
-        }
+        // ✅ Используем AuthService для логина вместо прямого $_SESSION
+        $this->authService->login($user->getEmail(), $request->getPassword());
 
-        $_SESSION['user_id'] = $user->getId();
+        // Получаем текущего пользователя через интерфейс
+        $currentUser = $this->authService->getCurrentUser();
 
+        // Теперь можно безопасно перенаправлять на каталог
         header('Location: ./catalog');
         exit;
     }
