@@ -28,17 +28,17 @@ $container->set(CartController::class,function (Container $container) {
 
     return new CartController($cartService, $authService);
 });
-$container->set(OrderController::class,function (Container $container) {
+$container->set(OrderController::class, function (Container $container) {
     $authService = $container->get(\Service\Auth\AuthServiceInterface::class);
-    $orderService = new OrderService();
+    $cartService = new CartService(); // Создаём CartService
+    $orderService = new OrderService($cartService); // Передаём CartService в OrderService
 
-    return new OrderController($orderService,$authService);
+    return new OrderController($orderService, $authService);
 });
 $container->set(ProductController::class,function (Container $container) {
     $authService = $container->get(\Service\Auth\AuthServiceInterface::class);
-    $productService = new ProductService();
     $cartService = new CartService();
-    return new ProductController ($productService,$authService,$cartService);
+    return new ProductController($authService, $cartService);
 });
 $container->set(\Service\Auth\AuthServiceInterface::class,function () {
    return new AuthSessionService();
@@ -57,15 +57,15 @@ $app->addRoute('/registration','GET',UserController::class,'getRegistrationForm'
 $app->addRoute('/registration','POST',UserController::class,'handleRegistration',RegistrateRequest::class);
 $app->addRoute('/login','GET',UserController::class,'getLoginForm');
 $app->addRoute('/login','POST',UserController::class,'handleLogin',LoginRequest::class);
-$app->addRoute('/catalog','GET',CartController::class,'getCatalogForm');
+$app->addRoute('/catalog','GET',ProductController::class,'getCatalog');
 $app->addRoute('/add-product','GET',ProductController::class,'getProductForm');
 $app->addRoute('/add-product','POST',ProductController::class,'addProduct',ProductRequest::class);
-$app->addRoute('/cart','GET',CartController::class,'getCartForm');
+$app->addRoute('/cart','GET',CartController::class,'getCart');
 $app->addRoute('/cart/clear','POST',CartController::class,'clearCart');
-$app->addRoute('/cart', 'POST', CartController::class, 'addOrUpdate');
+$app->addRoute('/cart', 'POST', CartController::class, 'addOrUpdateItem');
 $app->addRoute('/order','GET',OrderController::class,'getOrderForm');
 $app->addRoute('/order','POST',OrderController::class,'handleOrdersForm',OrderRequest::class);
 $app->addRoute('/order-success','GET',OrderController::class,'getSuccessPage');
-$app->addRoute('/orders','GET',OrderController::class,'getOrders');
+$app->addRoute('/orders','GET',OrderController::class,'listOrders');
 
 $app->run();

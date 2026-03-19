@@ -8,7 +8,7 @@
 
         <?php $total = 0; ?>
         <div class="cart-items">
-            <?php foreach ($products as $product):
+            <?php foreach ($orderProducts as $product):
                 // Используем методы объекта CartItem для расчета суммы
                 $subtotal = $product->getPrice() * $product->getAmount();
                 $total += $subtotal;

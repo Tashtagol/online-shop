@@ -64,7 +64,7 @@ class UserController
             return;
         }
 
-        $user = User::getByLogin($request->getLogin());
+        $user = User::getByEmail($request->getLogin());
 
         if (!$user || !password_verify($request->getPassword(), $user->getPassword())) {
             $errors['login'] = 'Неверный логин или пароль';
@@ -72,11 +72,10 @@ class UserController
             return;
         }
 
-        // ✅ Используем AuthService для логина вместо прямого $_SESSION
         $this->authService->login($user->getEmail(), $request->getPassword());
 
         // Получаем текущего пользователя через интерфейс
-        $currentUser = $this->authService->getCurrentUser();
+        $user= $this->authService->getCurrentUser();
 
         // Теперь можно безопасно перенаправлять на каталог
         header('Location: ./catalog');

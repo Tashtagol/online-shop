@@ -13,7 +13,7 @@
             <?php foreach($products as $product): ?>
                 <div class="product-card" data-product-id="<?= $product->getId() ?>">
                     <div class="product-image">
-                        <img src="<?= htmlspecialchars($product->getVieUrl()) ?>" alt="<?= htmlspecialchars($product->getName()) ?>">
+                        <img src="<?= htmlspecialchars($product->getViewUrl()) ?>" alt="<?= htmlspecialchars($product->getName()) ?>">
                     </div>
                     <div class="product-info">
                         <h4 class="product-name"><?= htmlspecialchars($product->getName()) ?></h4>
@@ -102,6 +102,7 @@
                         body:JSON.stringify({ product_id:productId, amount, source:'catalog' })
                     });
                     const data = await res.json();
+                    console.log(data);
                     if(res.ok && data.success){
                         msg.style.display='block';
                         document.getElementById('cart-count').textContent = data.count;

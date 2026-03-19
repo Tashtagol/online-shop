@@ -1,8 +1,8 @@
 <?php
 
-namespace Model;
+namespace DTO;
 
-class CartItem
+class CartItemDTO
 {
     private int $id;
     private string $name;

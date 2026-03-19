@@ -1,20 +1,16 @@
 <?php
 namespace Service;
 
-use Model\Product;
+use DTO\CartItemDTO;
 use Model\UserProduct;
-use Model\CartItem;
 
 class CartService
 {
-
-    public function getCart(int $userId): array
+    public static function createCartItemDTOs(array $products): array
     {
-        $products = UserProduct::getUserIdCart($userId);
-
         $result = [];
         foreach ($products as $item) {
-            $result[] = new CartItem(
+            $result[] = new CartItemDTO(
                 $item->product_id,          // ID продукта
                 $item->name,                // Название
                 $item->price,               // Цена
@@ -23,26 +19,81 @@ class CartService
                 $item->description          // Описание
             );
         }
-
         return $result;
     }
 
-    public function getTotal(array $products): float
+    public function getCart(int $userId): array
+    {
+        $products = UserProduct::getUserCartItems($userId);
+        return $this->createCartItemDTOs($products);
+    }
+    public function calculateSum(float $price, int $amount): float
+    {
+        return $price * $amount;
+    }
+
+    public function calculateCartTotal(array $products): float
     {
         $total = 0;
 
-        // Пересчитываем общую сумму
+        // Для каждого товара рассчитываем его сумму и добавляем к общей
         foreach ($products as $product) {
-            // Проверяем, что есть корректные данные для расчета
-            if ($product->getPrice() && $product->getAmount()) {  // Используем методы для доступа к данным
-                $total += $product->getPrice() * $product->getAmount();  // Умножаем цену на количество товара
-            }
+            $total += $this->calculateSum($product->getPrice(), $product->getAmount());
         }
 
         return $total;
     }
 
-    public function add(int $userId, int $productId, int $amount = 1)
+    public function addOrUpdateProductInCart(int $userId, array $data)
+    {
+        // Получаем данные из массива данных и обрабатываем их
+        $productId = intval($data['product_id'] ?? 0);
+        $amount = intval($data['amount'] ?? 1);
+        $source = $data['source'] ?? 'catalog';
+
+        // Получаем товар из корзины
+        $cartProduct = UserProduct::getUserProduct($userId, $productId);
+
+        if ($cartProduct) {
+            // Если товар уже есть в корзине, увеличиваем его количество
+            $newAmount = ($source === 'catalog') ? $cartProduct->amount + $amount : $amount;
+
+            // Если количество товара <= 0, удаляем товар из корзины
+            if ($newAmount <= 0) {
+                $this->removeCartItem($userId, $productId);
+            } else {
+                $newAmount = max(0, $newAmount);  // Устанавливаем минимальное количество = 0
+                $this->updateCartItem($userId, $productId, $newAmount);
+            }
+        } else {
+            // Если товара нет в корзине, добавляем его
+            $this->addCartItem($userId, $productId, $amount);
+        }
+
+        // После обновления/добавления товара, пересчитываем данные корзины
+        $products = $this->getCart($userId);
+        $total = $this->calculateCartTotal($products);
+
+        $subtotal = 0;
+        foreach ($products as $product) {
+            if ($product->getId() === $productId) {
+                $subtotal = $product->getPrice() * $product->getAmount();  // Считаем стоимость конкретного товара
+                break;
+            }
+        }
+
+        // Подсчитываем общее количество товаров в корзине
+        $count = array_sum(array_map(fn($product) => $product->getAmount(), $products));
+
+        return [
+            'total' => $total,
+            'subtotal' => $subtotal,
+            'count' => $count
+        ];
+    }
+
+
+    public function addCartItem(int $userId, int $productId, int $amount = 1)
     {
         // Проверяем, есть ли товар в корзине
         $existing = UserProduct::getUserProduct($userId, $productId);
@@ -53,17 +104,18 @@ class CartService
             UserProduct::updateUserProduct($existing->amount + $amount, $userId, $productId);
         } else {
             // Если товара нет, добавляем новый
-            UserProduct::setUserProduct($userId, $productId, $amount);
+            UserProduct::addProductToCart($userId, $productId, $amount);
         }
 
         return true;
     }
 
 
-    public function update(int $userId, int $productId, int $amount)
+
+    public function updateCartItem(int $userId, int $productId, int $amount)
     {
         if ($amount <= 0) {
-            UserProduct::clearCartItem($userId, $productId);
+            UserProduct::removeCartItem($userId, $productId);
         } else {
             UserProduct::updateUserProduct($amount, $userId, $productId);
         }
@@ -71,14 +123,14 @@ class CartService
         return true;
     }
 
-    public function clear(int $userId)
+    public function clearCart(int $userId)
     {
         UserProduct::clearCart($userId);
         return true;
     }
-    public function remove(int $userId, int $productId)
+    public function removeCartItem(int $userId, int $productId)
     {
         // Логика удаления товара из корзины
-        UserProduct::clearCartItem($userId, $productId);  // Удаляем товар из таблицы user_product
+        UserProduct::removeCartItem($userId, $productId);  // Удаляем товар из таблицы user_product
     }
 }

@@ -657,3 +657,308 @@ HINT:  Perhaps you meant to reference the column "products.viewurl".
 Срока: 89
 Время: 2026-03-16 18:12:27
 
+Ошибка: Call to a member function getName() on array
+Файл: /var/www/html/src/Model/Order.php
+Срока: 147
+Время: 2026-03-17 17:34:28
+
+Ошибка: Call to a member function getName() on array
+Файл: /var/www/html/src/Model/Order.php
+Срока: 147
+Время: 2026-03-17 17:34:50
+
+Ошибка: Model\UserProduct::getUserProduct(): Return value must be of type array, false returned
+Файл: /var/www/html/src/Model/UserProduct.php
+Срока: 14
+Время: 2026-03-19 13:56:27
+
+Ошибка: Model\UserProduct::getUserProduct(): Return value must be of type array, false returned
+Файл: /var/www/html/src/Model/UserProduct.php
+Срока: 14
+Время: 2026-03-19 13:56:30
+
+Ошибка: Model\UserProduct::getUserProduct(): Return value must be of type array, false returned
+Файл: /var/www/html/src/Model/UserProduct.php
+Срока: 14
+Время: 2026-03-19 13:56:35
+
+Ошибка: Model\UserProduct::getUserProduct(): Return value must be of type array, false returned
+Файл: /var/www/html/src/Model/UserProduct.php
+Срока: 14
+Время: 2026-03-19 13:56:53
+
+Ошибка: Model\UserProduct::getUserProduct(): Return value must be of type array, false returned
+Файл: /var/www/html/src/Model/UserProduct.php
+Срока: 14
+Время: 2026-03-19 13:57:10
+
+Ошибка: Model\UserProduct::getUserProduct(): Return value must be of type array, false returned
+Файл: /var/www/html/src/Model/UserProduct.php
+Срока: 14
+Время: 2026-03-19 13:57:18
+
+Ошибка: Model\UserProduct::getUserProduct(): Return value must be of type array, false returned
+Файл: /var/www/html/src/Model/UserProduct.php
+Срока: 14
+Время: 2026-03-19 13:57:21
+
+Ошибка: Model\UserProduct::getUserProduct(): Return value must be of type array, false returned
+Файл: /var/www/html/src/Model/UserProduct.php
+Срока: 14
+Время: 2026-03-19 13:57:23
+
+Ошибка: Model\UserProduct::getUserProduct(): Return value must be of type array, false returned
+Файл: /var/www/html/src/Model/UserProduct.php
+Срока: 14
+Время: 2026-03-19 13:57:29
+
+Ошибка: Model\UserProduct::getUserProduct(): Return value must be of type array, true returned
+Файл: /var/www/html/src/Model/UserProduct.php
+Срока: 14
+Время: 2026-03-19 14:00:49
+
+Ошибка: Model\UserProduct::getUserProduct(): Return value must be of type array, false returned
+Файл: /var/www/html/src/Model/UserProduct.php
+Срока: 14
+Время: 2026-03-19 14:03:21
+
+Ошибка: Model\UserProduct::getUserProduct(): Return value must be of type array, false returned
+Файл: /var/www/html/src/Model/UserProduct.php
+Срока: 14
+Время: 2026-03-19 14:03:25
+
+Ошибка: Model\UserProduct::getUserProduct(): Return value must be of type array, false returned
+Файл: /var/www/html/src/Model/UserProduct.php
+Срока: 14
+Время: 2026-03-19 14:06:08
+
+Ошибка: DTO\OrderItemDTO::__construct(): Argument #1 ($productId) must be of type int, array given, called in /var/www/html/src/Model/Order.php on line 151
+Файл: /var/www/html/src/DTO/OrderItemDTO.php
+Срока: 6
+Время: 2026-03-19 14:12:09
+
+Ошибка: DTO\OrderItemDTO::__construct(): Argument #1 ($productId) must be of type int, array given, called in /var/www/html/src/Model/Order.php on line 151
+Файл: /var/www/html/src/DTO/OrderItemDTO.php
+Срока: 6
+Время: 2026-03-19 14:12:12
+
+Ошибка: syntax error, unexpected token "public", expecting "("
+Файл: /var/www/html/src/Service/CartService.php
+Срока: 50
+Время: 2026-03-19 14:44:57
+
+Ошибка: syntax error, unexpected token "public", expecting "("
+Файл: /var/www/html/src/Service/CartService.php
+Срока: 50
+Время: 2026-03-19 14:44:59
+
+Ошибка: syntax error, unexpected token "public", expecting "("
+Файл: /var/www/html/src/Service/CartService.php
+Срока: 50
+Время: 2026-03-19 14:44:59
+
+Ошибка: syntax error, unexpected token "public", expecting ";" or "{"
+Файл: /var/www/html/src/Service/CartService.php
+Срока: 47
+Время: 2026-03-19 14:45:41
+
+Ошибка: Service\CartService::addOrUpdate(): Argument #3 ($amount) must be of type int, string given, called in /var/www/html/src/Controller/CartController.php on line 58
+Файл: /var/www/html/src/Service/CartService.php
+Срока: 45
+Время: 2026-03-19 14:59:34
+
+Ошибка: json_encode(): Argument #2 ($flags) must be of type int, array given
+Файл: /var/www/html/src/Controller/CartController.php
+Срока: 61
+Время: 2026-03-19 15:02:12
+
+Ошибка: json_encode(): Argument #2 ($flags) must be of type int, array given
+Файл: /var/www/html/src/Controller/CartController.php
+Срока: 61
+Время: 2026-03-19 15:02:36
+
+Ошибка: Call to a member function getAmount() on array
+Файл: /var/www/html/src/Service/CartService.php
+Срока: 51
+Время: 2026-03-19 15:16:55
+
+Ошибка: Call to a member function getAmount() on array
+Файл: /var/www/html/src/Service/CartService.php
+Срока: 51
+Время: 2026-03-19 15:16:59
+
+Ошибка: Call to a member function getAmount() on array
+Файл: /var/www/html/src/Service/CartService.php
+Срока: 51
+Время: 2026-03-19 15:17:11
+
+Ошибка: Call to a member function getAmount() on array
+Файл: /var/www/html/src/Service/CartService.php
+Срока: 53
+Время: 2026-03-19 15:18:58
+
+Ошибка: Model\UserProduct::getUserProduct(): Return value must be of type array, stdClass returned
+Файл: /var/www/html/src/Model/UserProduct.php
+Срока: 16
+Время: 2026-03-19 15:20:21
+
+Ошибка: Model\UserProduct::getUserProduct(): Return value must be of type ?Model\UserProduct, stdClass returned
+Файл: /var/www/html/src/Model/UserProduct.php
+Срока: 16
+Время: 2026-03-19 15:20:42
+
+Ошибка: Model\UserProduct::getUserProduct(): Return value must be of type Model\UserProduct, stdClass returned
+Файл: /var/www/html/src/Model/UserProduct.php
+Срока: 16
+Время: 2026-03-19 15:20:58
+
+Ошибка: Model\UserProduct::getUserProduct(): Return value must be of type ?Model\UserProduct, stdClass returned
+Файл: /var/www/html/src/Model/UserProduct.php
+Срока: 16
+Время: 2026-03-19 15:21:42
+
+Ошибка: Call to undefined method stdClass::getAmount()
+Файл: /var/www/html/src/Service/CartService.php
+Срока: 53
+Время: 2026-03-19 15:26:00
+
+Ошибка: Call to undefined method stdClass::getAmount()
+Файл: /var/www/html/src/Service/CartService.php
+Срока: 53
+Время: 2026-03-19 15:31:55
+
+Ошибка: Service\CartService::addOrUpdate(): Argument #2 ($data) must be of type array, int given, called in /var/www/html/src/Controller/CartController.php on line 59
+Файл: /var/www/html/src/Service/CartService.php
+Срока: 45
+Время: 2026-03-19 15:37:32
+
+Ошибка: Call to undefined method Model\CartItem::getProductId()
+Файл: /var/www/html/src/Service/CartService.php
+Срока: 79
+Время: 2026-03-19 15:39:39
+
+Ошибка: Service\CartService::addOrUpdate(): Argument #2 ($productId) must be of type int, array given, called in /var/www/html/src/Controller/CartController.php on line 58
+Файл: /var/www/html/src/Service/CartService.php
+Срока: 45
+Время: 2026-03-19 15:40:55
+
+Ошибка: Call to undefined method stdClass::getAmount()
+Файл: /var/www/html/src/Service/CartService.php
+Срока: 51
+Время: 2026-03-19 15:42:51
+
+Ошибка: Call to undefined method Controller\OrderController::checkAuth()
+Файл: /var/www/html/src/Controller/OrderController.php
+Срока: 35
+Время: 2026-03-19 16:30:23
+
+Ошибка: Call to undefined method Controller\CartController::getCatalogForm()
+Файл: /var/www/html/src/Core/App.php
+Срока: 51
+Время: 2026-03-19 17:06:30
+
+Ошибка: Controller\ProductController::__construct(): Argument #1 ($authService) must be of type Service\Auth\AuthServiceInterface, Service\ProductService given, called in /var/www/html/src/public/index.php on line 41
+Файл: /var/www/html/src/Controller/ProductController.php
+Срока: 13
+Время: 2026-03-19 17:07:28
+
+Ошибка: Controller\ProductController::__construct(): Argument #1 ($authService) must be of type Service\Auth\AuthServiceInterface, Service\ProductService given, called in /var/www/html/src/public/index.php on line 41
+Файл: /var/www/html/src/Controller/ProductController.php
+Срока: 13
+Время: 2026-03-19 17:07:29
+
+Ошибка: Class "Service\CartItemDTO" not found
+Файл: /var/www/html/src/Service/CartService.php
+Срока: 16
+Время: 2026-03-19 17:33:10
+
+Ошибка: Cannot use object of type DTO\CartItemDTO as array
+Файл: /var/www/html/src/Model/Order.php
+Срока: 119
+Время: 2026-03-19 17:54:16
+
+Ошибка: Cannot use object of type DTO\CartItemDTO as array
+Файл: /var/www/html/src/Model/Order.php
+Срока: 119
+Время: 2026-03-19 18:39:34
+
+Ошибка: Call to undefined method Model\Product::getVieUrl()
+Файл: /var/www/html/src/View/Catalog.php
+Срока: 16
+Время: 2026-03-19 19:13:13
+
+Ошибка: Call to undefined method Model\Product::getVieUrl()
+Файл: /var/www/html/src/View/Catalog.php
+Срока: 16
+Время: 2026-03-19 19:13:22
+
+Ошибка: Call to undefined method Model\User::getByLogin()
+Файл: /var/www/html/src/Service/Auth/AuthSessionService.php
+Срока: 31
+Время: 2026-03-19 19:21:14
+
+Ошибка: Non-static method Service\CartService::calculateSum() cannot be called statically
+Файл: /var/www/html/src/Service/OrderService.php
+Срока: 90
+Время: 2026-03-19 19:44:41
+
+Ошибка: Call to a member function calculateSum() on null
+Файл: /var/www/html/src/Service/OrderService.php
+Срока: 90
+Время: 2026-03-19 19:45:48
+
+Ошибка: Too few arguments to function Service\OrderService::__construct(), 0 passed in /var/www/html/src/public/index.php on line 33 and exactly 1 expected
+Файл: /var/www/html/src/Service/OrderService.php
+Срока: 17
+Время: 2026-03-19 19:48:24
+
+Ошибка: Call to undefined method Controller\ProductController::getCatalogForm()
+Файл: /var/www/html/src/Core/App.php
+Срока: 51
+Время: 2026-03-19 20:28:03
+
+Ошибка: Call to undefined method Controller\ProductController::getCatalogForm()
+Файл: /var/www/html/src/Core/App.php
+Срока: 51
+Время: 2026-03-19 20:28:10
+
+Ошибка: Call to undefined method Model\Product::getVieUrl()
+Файл: /var/www/html/src/View/Catalog.php
+Срока: 16
+Время: 2026-03-19 20:30:12
+
+Ошибка: Call to undefined method Controller\CartController::addOrUpdate()
+Файл: /var/www/html/src/Core/App.php
+Срока: 49
+Время: 2026-03-19 20:30:43
+
+Ошибка: Call to undefined method Controller\CartController::getCartForm()
+Файл: /var/www/html/src/Core/App.php
+Срока: 51
+Время: 2026-03-19 20:31:35
+
+Ошибка: DTO\CreateOrderDTO::getPayment(): Return value must be of type string, null returned
+Файл: /var/www/html/src/DTO/CreateOrderDTO.php
+Срока: 38
+Время: 2026-03-19 20:36:28
+
+Ошибка: DTO\CreateOrderDTO::getPayment(): Return value must be of type string, null returned
+Файл: /var/www/html/src/DTO/CreateOrderDTO.php
+Срока: 38
+Время: 2026-03-19 20:37:02
+
+Ошибка: Call to undefined method DTO\CreateOrderDTO::getPaymentMethod()
+Файл: /var/www/html/src/Service/OrderService.php
+Срока: 38
+Время: 2026-03-19 20:37:52
+
+Ошибка: Call to undefined method Controller\OrderController::getOrders()
+Файл: /var/www/html/src/Core/App.php
+Срока: 51
+Время: 2026-03-19 20:39:09
+
+Ошибка: Call to undefined method Controller\OrderController::getOrders()
+Файл: /var/www/html/src/Core/App.php
+Срока: 51
+Время: 2026-03-19 20:39:20
+

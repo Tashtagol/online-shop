@@ -19,7 +19,6 @@ class AuthSessionService implements AuthServiceInterface
         $userId = (int) $_SESSION['user_id'];
         return User::getById($userId);
 
-
     }
     private function sessionStart():void
     {
@@ -29,7 +28,7 @@ class AuthSessionService implements AuthServiceInterface
     }
     public function login(string $login, string $password): bool
     {
-        $user = User::getByLogin($login);
+        $user = User::getByEmail($login);
         if($user !== null && password_verify($password,$user->getPassword())) {
             $this->sessionStart();
             $_SESSION['user_id'] = $user->getId();

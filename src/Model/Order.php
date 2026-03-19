@@ -19,7 +19,7 @@ class Order extends Model
     private string $payment;
 
     // Создаем и сохраняем заказ
-    public static function create(int $userId, string $name, string $email, string $address, string $phone, string $payment
+    public static function create(int $userId, string $name, string $email, string $address, string $phone, string $paymentMethod
     ): self
     {
         $orderNumber = self::generateOrderNumber();
@@ -35,7 +35,7 @@ class Order extends Model
             ':telephone' => $phone,
             ':order_number' => $orderNumber,
             ':order_date'=> $orderDate,
-            ':payment' => $payment
+            ':payment' => $paymentMethod
         ]);
 
         $data = $stmt->fetch(\PDO::FETCH_ASSOC);
@@ -49,7 +49,7 @@ class Order extends Model
         $order->phone = $phone;
         $order->orderNumber = $data['order_number'];
         $order->orderDate = $data['order_date'];
-        $order->payment = $payment; // <-- вот тут исправлено
+        $order->payment = $paymentMethod;
 
         return $order;
     }
@@ -112,16 +112,17 @@ class Order extends Model
             "INSERT INTO order_products (order_id, product_id, amount, price) 
             VALUES (:order_id, :product_id, :amount, :price)"
         );
-
         foreach ($orderItems as $item) {
-            $stmt->execute([
-                ':order_id' => $this->id,
-                ':product_id' => $item['product_id'],
-                ':amount' => $item['amount'],
-                ':price' => $item['price']
-            ]);
+            if ($item instanceof \DTO\CartItemDTO) {
+                $stmt->execute([
+                    ':order_id' => $this->id,
+                    ':product_id' => $item->getId(),
+                    ':amount' => $item->getAmount(),
+                    ':price' => $item->getPrice()
+                ]);
+            }
         }
-    }
+        }
 
     // Получаем продукты заказа как объекты OrderItemDTO
     public function getOrderProducts(): array
@@ -129,27 +130,30 @@ class Order extends Model
         if ($this->products) {
             return $this->products;
         }
-        $stmt = self::getPDO()->prepare("SELECT order_products.order_id,order_products.product_id,order_products.amount,order_products.price,products.name,products.viewurl,products.description
-         FROM order_products INNER JOIN products ON order_products.product_id = products.id
-         WHERE order_products.order_id = :order_id
-         ORDER BY products.id");
+
+        $stmt = self::getPDO()->prepare("SELECT order_products.order_id, order_products.product_id, order_products.amount, order_products.price, products.name, products.viewurl, products.description
+        FROM order_products 
+        INNER JOIN products ON order_products.product_id = products.id
+        WHERE order_products.order_id = :order_id
+        ORDER BY products.id");
         $stmt->execute(['order_id' => $this->id]);
         $orderRows = $stmt->fetchAll(\PDO::FETCH_ASSOC);
 
         if (!$orderRows) return [];
+
         $result = [];
         foreach ($orderRows as $row) {
-                $data = [
-                    'product_id' => $row['product_id'],
-                    'order_id' => $row['order_id'],
-                    'amount' => $row['amount'],
-                    'price' => $row['price'],
-                    'name' => $row->getName(),
-                    'view_url' => $row->getVieUrl(),
-                    'description' => $row->getDescription()
-                ];
-                $result[] = new OrderItemDTO($data);
-            }
+            $result[] = new OrderItemDTO(
+                productId: $row['product_id'],
+                orderId: $row['order_id'],
+                amount: $row['amount'],
+                price: $row['price'],
+                name: $row['name'],
+                viewUrl: $row['viewurl'],
+                description: $row['description']
+            );
+        }
+
         $this->products = $result;
         return $result;
     }

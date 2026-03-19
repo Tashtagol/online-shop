@@ -74,6 +74,12 @@ $total = 0;  // Переменная для общей суммы заказа
                                 <span class="item-name"><?= htmlspecialchars($item['name']) ?></span>
                                 <span class="item-amount"><?= $item['amount'] ?> шт × <?= number_format($item['price'], 2) ?> ₽</span>
                                 <span class="item-subtotal"><?= number_format($item['sum'], 2) ?> ₽</span>
+                                <!-- Добавляем описание товара -->
+                                <p class="item-description"><?= htmlspecialchars($item['description']) ?></p>
+
+                                <!-- Добавляем скрытые поля для передачи в форму -->
+                                <input type="hidden" name="items[<?= $item['product_id'] ?>][name]" value="<?= htmlspecialchars($item['name']) ?>">
+                                <input type="hidden" name="items[<?= $item['product_id'] ?>][description]" value="<?= htmlspecialchars($item['description']) ?>">
                             </div>
                         </div>
                     <?php endforeach; ?>
@@ -139,6 +145,17 @@ $total = 0;  // Переменная для общей суммы заказа
     .item-name { font-weight: 700; font-size: 17px; margin-bottom: 4px; }
     .item-amount { margin-bottom: 2px; }
     .item-subtotal { font-weight: 600; color: #3b82f6; }
+
+    .item-description {
+        font-size: 14px;
+        color: #6b7280;
+        margin-top: 8px;
+        line-height: 1.5;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;  /* Ограничиваем отображение двумя строками */
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
 
     .checkout-total { font-size: 22px; font-weight: 700; display: flex; justify-content: space-between; margin-top: 20px; padding-top: 15px; border-top: 2px dashed #f3b4d3; }
 

@@ -8,18 +8,15 @@ use Model\Product;
 class ProductService
 {
 
-    public function addProduct($userId, $productId, $amount)
-    {
-        $cartItem = UserProduct::getUserProduct($userId, $productId);
-
-        if (!$cartItem) {
-            UserProduct::setUserProduct($userId, $productId, $amount);
-        } else {
-            UserProduct::updateUserProduct($amount, $userId, $productId);
-        }
-    }
     public function getAllProducts(): array
     {
-        return Product::getAllProducts();
+        return Product::getAllProducts();  // Вызов метода из модели
     }
+
+    // Получаем продукт по ID
+    public function getProductById(int $productId): ?Product
+    {
+        return Product::getProductById($productId);
+    }
+
 }

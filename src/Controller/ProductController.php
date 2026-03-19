@@ -1,70 +1,42 @@
 <?php
 namespace Controller;
 
-use Model\Product;
-use Model\UserProduct;
-use Request\ProductRequest;
 use Service\Auth\AuthServiceInterface;
-use Service\Auth\AuthSessionService;
+use Model\Product;
 use Service\CartService;
-use Service\ProductService;
 
 class ProductController
 {
-    private ProductService $productService;
     private AuthServiceInterface $authService;
     private CartService $cartService;
 
-    public function __construct(ProductService $productService,AuthServiceInterface $authService,CartService $cartService)
+    public function __construct(AuthServiceInterface $authService, CartService $cartService)
     {
-        $this->productService = $productService;
         $this->authService = $authService;
         $this->cartService = $cartService;
     }
 
-    public function getProduct()
+    // Страница каталога
+    public function getCatalog()
     {
-        $this->checkSession();
+        $userId = $this->checkAuth()->getId();
 
-        $products = $this->productService->getAllProducts();
+        $products = Product::getAllProducts();
+
+        // Получаем корзину пользователя для отображения количества товаров
+        $cartProducts = $this->cartService->getCart($userId);
+        $cartCount = array_sum(array_map(fn($item) => $item->getAmount(), $cartProducts));
+
         require_once './../View/Catalog.php';
     }
 
-    public function getProductForm()
+    private function checkAuth()
     {
-        require_once './../View/addProduct.php';
-    }
-
-    public function addProduct(ProductRequest $request)
-    {
-        $request->validate();
-        $errors = $request->getErrors();
-        if (!empty($errors)) {
-            require_once './../View/addProduct.php';
-            return;
-        }
-
         $user = $this->authService->getCurrentUser();
         if (!$user) {
             header("Location: /login");
             exit;
         }
-        $userId = $user->getId();
-        $productId = $request ->getProductId();
-        $amount = $request ->getAmount();
-
-       $this->productService->addProduct($userId, $productId, $amount);
-
-        header("Location: /cart");
-        exit;
-    }
-
-
-    private function checkSession(): void
-    {
-        if (!$this->authService->check()) {
-            header("Location: /login");
-            exit;
-        }
+        return $user;
     }
 }

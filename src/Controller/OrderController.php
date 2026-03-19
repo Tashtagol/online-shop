@@ -2,11 +2,8 @@
 namespace Controller;
 use DTO\CreateOrderDTO;
 use Model\Order;
-use Model\Product;
-use Model\UserProduct;
 use Request\OrderRequest;
 use Service\Auth\AuthServiceInterface;
-use Service\Auth\AuthSessionService;
 use Service\OrderService;
 
 class OrderController
@@ -22,8 +19,8 @@ class OrderController
 
     public function getOrderForm(array $params = [])
     {
-        $user = $this->checkAuth();
-        $cartData = $this->orderService->getCartData($user->getId());
+        $userId = $this->checkAuth()->getId();
+        $cartData = $this->orderService->getUserCartData($userId);
         $orderItems = $cartData['items'];
         $total = $cartData['total'];
 
@@ -35,8 +32,7 @@ class OrderController
 
     public function handleOrdersForm(OrderRequest  $request)
     {
-        $user = $this->checkAuth();
-        $userId = $user->getId();
+        $userId = $this->checkAuth()->getId();
 
         $data = $request->getData();
         $errors = $request->validate();
@@ -62,10 +58,9 @@ class OrderController
         exit;
     }
 
-    public function getOrders(): void
+    public function listOrders(): void
     {
-        $user = $this->checkAuth();
-        $userId = $user->getId();
+        $userId = $this->checkAuth()->getId();
         $orders = Order::getAllByUserId($userId);
 
         // Загружаем товары для каждого заказа
@@ -79,8 +74,7 @@ class OrderController
 
     public function getSuccessPage()
     {
-        $user = $this->checkAuth();
-        $userId = $user->getId();
+        $userId = $this->checkAuth()->getId();
 
         $orderNumber = $_GET['number'] ?? null;
 
@@ -101,7 +95,7 @@ class OrderController
 
     private function checkAuth()
     {
-        $user = $this->authService->getCurrentUser();
+        $user = $this->authService->getCurrentUser();   // Исправить метод, нужен просто check
         if (!$user) {
             header("Location: /login");
             exit;
