@@ -172,6 +172,29 @@ class Order extends Model
         $order->orderDate = $data['order_date'] ?? null;
         return $order;
     }
+    public static function checkVerifiedPurchase(int $userId, int $productId): bool
+    {
+        $stmt = self::getPDO()->prepare("SELECT 1 FROM order_products INNER JOIN orders ON order_products.order_id = orders.id
+            WHERE orders.user_id = :user_id AND order_products.product_id = :product_id LIMIT 1");
+
+        $stmt->execute(['user_id' => $userId, 'product_id' => $productId]);
+
+        // Если нашли запись, значит продукт был заказан
+        return (bool) $stmt->fetchColumn();
+    }
+
+
+    public static function isProductInUserOrder(int $productId, int $userId): bool
+    {
+        $stmt = self::getPDO()->prepare(
+            "SELECT 1 FROM order_products 
+            WHERE order_id IN (SELECT id FROM orders WHERE user_id = :user_id) 
+            AND product_id = :product_id"
+        );
+        $stmt->execute(['user_id' => $userId, 'product_id' => $productId]);
+
+        return $stmt->fetchColumn() !== false;
+    }
 
     // Геттеры
     public function getId(): ?int
@@ -216,4 +239,10 @@ class Order extends Model
     {
         return $this->products;
     }
+
+    public function getPayment(): string
+    {
+        return $this->payment;
+    }
+
 }

@@ -22,6 +22,10 @@
                                     <span>Кол-во: <?= $product->getAmount() ?></span>
                                     <span>Цена: <?= number_format($product->getPrice(), 2) ?> ₽</span>
                                 </div>
+                                <div class="product-actions">
+                                    <!-- Кнопка для перехода к отзыву -->
+                                    <a href="/review/<?= $product->getProductId() ?>" class="btn-review">Оставить отзыв</a>
+                                </div>
                             </div>
                         </div>
                     <?php endforeach; ?>
@@ -132,6 +136,24 @@
         display: flex;
         justify-content: space-between;
         font-weight: 600;
+    }
+
+    .product-actions {
+        margin-top: 10px;
+    }
+
+    .btn-review {
+        background-color: #ec4899;
+        color: white;
+        padding: 8px 16px;
+        text-decoration: none;
+        border-radius: 8px;
+        font-weight: 600;
+        transition: 0.3s;
+    }
+
+    .btn-review:hover {
+        background-color: #f472b6;
     }
 
     .order-total {

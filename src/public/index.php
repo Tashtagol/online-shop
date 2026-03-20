@@ -67,5 +67,7 @@ $app->addRoute('/order','GET',OrderController::class,'getOrderForm');
 $app->addRoute('/order','POST',OrderController::class,'handleOrdersForm',OrderRequest::class);
 $app->addRoute('/order-success','GET',OrderController::class,'getSuccessPage');
 $app->addRoute('/orders','GET',OrderController::class,'listOrders');
+$app->addRoute('/product/{productId}/reviews', 'GET', ReviewController::class, 'getReviewForm');
+$app->addRoute('/product/{productId}/reviews', 'POST', ReviewController::class, 'submitReview', ReviewRequest::class);
 
 $app->run();

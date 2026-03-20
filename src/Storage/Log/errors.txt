@@ -962,3 +962,33 @@ HINT:  Perhaps you meant to reference the column "products.viewurl".
 Срока: 51
 Время: 2026-03-19 20:39:20
 
+Ошибка: Call to undefined method DTO\OrderItemDTO::hasReview()
+Файл: /var/www/html/src/View/orders.php
+Срока: 27
+Время: 2026-03-20 10:22:46
+
+Ошибка: Call to undefined method DTO\OrderItemDTO::hasReview()
+Файл: /var/www/html/src/View/orders.php
+Срока: 27
+Время: 2026-03-20 10:45:59
+
+Ошибка: Call to undefined method DTO\OrderItemDTO::hasReview()
+Файл: /var/www/html/src/View/orders.php
+Срока: 27
+Время: 2026-03-20 10:46:07
+
+Ошибка: Call to undefined method DTO\OrderItemDTO::hasReview()
+Файл: /var/www/html/src/View/orders.php
+Срока: 27
+Время: 2026-03-20 10:46:08
+
+Ошибка: Call to undefined method DTO\OrderItemDTO::getId()
+Файл: /var/www/html/src/View/orders.php
+Срока: 26
+Время: 2026-03-20 10:47:03
+
+Ошибка: Call to undefined method DTO\OrderItemDTO::getId()
+Файл: /var/www/html/src/View/orders.php
+Срока: 27
+Время: 2026-03-20 15:50:10
+

@@ -29,6 +29,9 @@
                         <button class="btn-add ajax-add">Добавить в корзину</button>
                         <div class="add-msg">Добавлено!</div>
                     </div>
+
+                    <!-- Кнопка для перехода к отзывам -->
+                    <a href="/product/<?= $product->getId() ?>/reviews" class="btn-reviews">Отзывы</a>
                 </div>
             <?php endforeach; ?>
         <?php else: ?>
@@ -68,6 +71,24 @@
     .btn-add:hover { background:#f472b6; }
 
     .add-msg { font-size:13px; color:green; margin-top:5px; display:none; }
+
+    /* Стиль для кнопки отзывов */
+    .btn-reviews {
+        display: inline-block;
+        margin-top: 10px;
+        padding: 8px 16px;
+        background-color: #6366F1;
+        color: white;
+        font-weight: bold;
+        border-radius: 10px;
+        text-decoration: none;
+        text-align: center;
+        transition: 0.3s;
+    }
+
+    .btn-reviews:hover {
+        background-color: #4F46E5;
+    }
 </style>
 
 <script>
