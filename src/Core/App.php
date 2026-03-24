@@ -22,51 +22,54 @@ class App
         $requestUri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
         $requestMethod = $_SERVER['REQUEST_METHOD'];
 
-        // Проверка существования маршрута
-        if (!isset($this->routes[$requestUri])) {
-            http_response_code(404);
-            require_once './../View/404.php';
-            return;
-        }
+        // Паттерн для поиска динамических параметров в маршруте
+        foreach ($this->routes as $pattern => $methods) {
+            if (preg_match("#^$pattern$#", $requestUri, $matches)) {
+                // Если совпал маршрут, передаем параметры в метод контроллера
+                array_shift($matches); // Убираем сам URL
+                $params = array_values($matches); // Параметры из URL
 
-        // Проверка поддержки метода
-        if (!isset($this->routes[$requestUri][$requestMethod])) {
-            echo "$requestMethod не поддерживается адресом $requestUri";
-            return;
-        }
+                // Получаем маршрут и его метод
+                $route = $methods[$requestMethod] ?? null;
+                if ($route) {
+                    $className = $route['class'];
+                    $methodName = $route['method'];
+                    $requestClass = $route['request'] ?? \Request\Request::class;
 
-        try {
-            $route = $this->routes[$requestUri][$requestMethod];
-            $className = $route['class'];
-            $methodName = $route['method'];
-            $requestClass = $route['request'] ?? \Request\Request::class;
+                    // Создаем объект запроса
+                    $request = new $requestClass($requestMethod, $requestUri, $_POST);
+                    // Получаем контроллер
+                    $controller = $this->container->get($className);
+                    // Передаем параметры в метод контроллера
+                    call_user_func_array([$controller, $methodName], array_merge($params, [$request]));
 
-            $controller = $this->container->get($className);
-            $request = new $requestClass($requestMethod, $requestUri, $_POST);
-
-            // Вызов метода контроллера
-            if ($requestMethod === 'POST') {
-                $controller->$methodName($request);
-            } else {
-                $controller->$methodName();
+                    return; // Завершаем выполнение, так как маршрут найден и обработан
+                }
             }
-
-        } catch (\Throwable $exception) {
-            $this->loggerService->error($exception);
-            http_response_code(500);
-            require_once './../View/500.php';
         }
+
+        // Если маршрут не найден, возвращаем 404
+        http_response_code(404);
+        require_once './../View/404.php';
     }
 
-    public function addRoute(string $requestUri, string $requestMethod,string $className,string $methodName, string $requestClass = Request :: class): void
+    public function addRoute(string $requestUri, string $requestMethod, string $className, string $methodName, string $requestClass = Request::class): void
     {
-        if(!isset($this->routes[$requestUri][$requestMethod]))
-        {
-            $this->routes[$requestUri][$requestMethod]['class'] = $className;
-            $this->routes[$requestUri][$requestMethod]['method'] = $methodName;
-            $this->routes[$requestUri][$requestMethod]['request'] = $requestClass;
+        // Паттерн для динамических маршрутов
+        $pattern = preg_replace('/\{(\w+)\}/', '(\w+)', $requestUri);
+
+        if (!isset($this->routes[$pattern])) {
+            $this->routes[$pattern] = [];
+        }
+
+        if (!isset($this->routes[$pattern][$requestMethod])) {
+            $this->routes[$pattern][$requestMethod] = [
+                'class' => $className,
+                'method' => $methodName,
+                'request' => $requestClass
+            ];
         } else {
-            echo "$requestMethod уже зарегестрирован для $requestUri" . "<br>";
+            echo "$requestMethod уже зарегистрирован для маршрута $requestUri" . "<br>";
         }
     }
 }

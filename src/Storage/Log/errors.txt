@@ -992,3 +992,98 @@ HINT:  Perhaps you meant to reference the column "products.viewurl".
 Срока: 27
 Время: 2026-03-20 15:50:10
 
+Ошибка: Call to undefined method DTO\OrderItemDTO::getId()
+Файл: /var/www/html/src/View/orders.php
+Срока: 27
+Время: 2026-03-24 14:21:14
+
+Ошибка: Too few arguments to function Service\OrderService::__construct(), 0 passed in /var/www/html/src/Core/Container.php on line 11 and exactly 1 expected
+Файл: /var/www/html/src/Service/OrderService.php
+Срока: 17
+Время: 2026-03-24 15:06:54
+
+Ошибка: Cannot instantiate interface Service\Auth\AuthServiceInterface
+Файл: /var/www/html/src/Core/Container.php
+Срока: 11
+Время: 2026-03-24 15:10:26
+
+Ошибка: Class "ReviewController" not found
+Файл: /var/www/html/src/public/index.php
+Срока: 51
+Время: 2026-03-24 15:11:30
+
+Ошибка: Class "ReviewRequest" not found
+Файл: /var/www/html/src/Core/App.php
+Срока: 63
+Время: 2026-03-24 15:12:14
+
+Ошибка: Too few arguments to function Controller\UserController::__construct(), 0 passed in /var/www/html/src/Core/Container.php on line 11 and exactly 1 expected
+Файл: /var/www/html/src/Controller/UserController.php
+Срока: 17
+Время: 2026-03-24 15:13:03
+
+Ошибка: Controller\UserController::handleLogin(): Argument #1 ($request) must be of type Request\LoginRequest, null given, called in /var/www/html/src/Core/App.php on line 67
+Файл: /var/www/html/src/Controller/UserController.php
+Срока: 57
+Время: 2026-03-24 15:13:32
+
+Ошибка: Controller\UserController::handleLogin(): Argument #1 ($request) must be of type Request\LoginRequest, null given, called in /var/www/html/src/Core/App.php on line 67
+Файл: /var/www/html/src/Controller/UserController.php
+Срока: 57
+Время: 2026-03-24 15:13:45
+
+Ошибка: Class "ReviewController" not found
+Файл: /var/www/html/src/public/index.php
+Срока: 53
+Время: 2026-03-24 15:16:26
+
+Ошибка: Controller\ReviewController::__construct(): Argument #3 ($orderService) must be of type Service\OrderService, null given, called in /var/www/html/src/public/index.php on line 56
+Файл: /var/www/html/src/Controller/ReviewController.php
+Срока: 17
+Время: 2026-03-24 15:18:18
+
+Ошибка: Controller\ReviewController::__construct(): Argument #3 ($orderService) must be of type Service\OrderService, null given, called in /var/www/html/src/public/index.php on line 56
+Файл: /var/www/html/src/Controller/ReviewController.php
+Срока: 17
+Время: 2026-03-24 15:21:10
+
+Ошибка: Too few arguments to function Service\OrderService::__construct(), 0 passed in /var/www/html/src/public/index.php on line 56 and exactly 1 expected
+Файл: /var/www/html/src/Service/OrderService.php
+Срока: 18
+Время: 2026-03-24 15:22:33
+
+Ошибка: Service\OrderService::__construct(): Argument #1 ($cartService) must be of type Service\CartService, null given, called in /var/www/html/src/public/index.php on line 56
+Файл: /var/www/html/src/Service/OrderService.php
+Срока: 18
+Время: 2026-03-24 15:23:23
+
+Ошибка: Service\OrderService::__construct(): Argument #1 ($cartService) must be of type Service\CartService, Service\ReviewService given, called in /var/www/html/src/public/index.php on line 56
+Файл: /var/www/html/src/Service/OrderService.php
+Срока: 18
+Время: 2026-03-24 15:23:56
+
+Ошибка: Too few arguments to function Controller\ReviewController::__construct(), 2 passed in /var/www/html/src/public/index.php on line 56 and exactly 3 expected
+Файл: /var/www/html/src/Controller/ReviewController.php
+Срока: 17
+Время: 2026-03-24 15:25:54
+
+Ошибка: Too few arguments to function Service\OrderService::__construct(), 0 passed in /var/www/html/src/Core/Container.php on line 11 and exactly 1 expected
+Файл: /var/www/html/src/Service/OrderService.php
+Срока: 18
+Время: 2026-03-24 15:26:38
+
+Ошибка: Controller\ReviewController::submitReview(): Argument #1 ($productId) must be of type int, Request\ReviewRequest given, called in /var/www/html/src/Core/App.php on line 51
+Файл: /var/www/html/src/Controller/ReviewController.php
+Срока: 43
+Время: 2026-03-24 15:28:39
+
+Ошибка: Controller\ReviewController::submitReview(): Argument #1 ($productId) must be of type int, Request\ReviewRequest given, called in /var/www/html/src/Core/App.php on line 51
+Файл: /var/www/html/src/Controller/ReviewController.php
+Срока: 43
+Время: 2026-03-24 15:30:33
+
+Ошибка: Controller\ReviewController::submitReview(): Argument #1 ($productId) must be of type int, Request\ReviewRequest given, called in /var/www/html/src/Core/App.php on line 51
+Файл: /var/www/html/src/Controller/ReviewController.php
+Срока: 43
+Время: 2026-03-24 15:32:55
+

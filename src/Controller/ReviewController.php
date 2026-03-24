@@ -2,79 +2,110 @@
 
 namespace Controller;
 
+use Service\ReviewService;
 use Service\Auth\AuthSessionService;
 use Service\OrderService;
-use Service\ReviewService;
 use Request\ReviewRequest;
-use Model\ReviewDTO;
+use DTO\ReviewDTO;
 
 class ReviewController
 {
-    private $reviewService;
-    private $authService;
-    private $orderService;
+    private ReviewService $reviewService;
+    private AuthSessionService $authService;
+    private OrderService $orderService;
 
-    public function __construct(ReviewService $reviewService, AuthSessionService $authService, OrderService $orderService)
-    {
+    public function __construct(
+        ReviewService $reviewService,
+        AuthSessionService $authService,
+        OrderService $orderService
+    ) {
         $this->reviewService = $reviewService;
         $this->authService = $authService;
         $this->orderService = $orderService;
     }
 
-    // Форма для оставления отзыва
-    public function getReviewForm(int $productId)
+    // GET: показать форму
+    public function getReviewForm(int $productId, $data = [])
     {
-        $user = $this->checkAuth(); // Проверяем авторизацию
+        $user = $this->checkAuth();
 
-        // Проверяем, что продукт есть в заказе пользователя
-        if (!$this->reviewService->isProductInUserOrder($productId, $user->getId())) {
-            echo "Вы не можете оставить отзыв на этот продукт, так как он не был заказан вами.";
+        $product = $this->reviewService->getProductById($productId);
+        if (!$product) {
+            echo "Продукт не найден";
             exit;
         }
 
-        // Загружаем продукт, чтобы отобразить его название и другие данные в форме
-        $product = $this->orderService->getProductById($productId);
+        // Проверка наличия старых данных
+        if (isset($data['old'])) {
+            $old = $data['old'];
+        } else {
+            $old = ['rating' => null, 'comment' => '']; // Убедитесь, что рейтинг не будет равен 0 по умолчанию
+        }
 
-        // Передаем данные в представление
+        // Отправляем данные в шаблон
         require_once './../View/Review.php';
     }
 
-    // Обработка отзыва
+    // POST: обработка формы
     public function submitReview(int $productId, ReviewRequest $request)
     {
-        $user = $this->checkAuth(); // Проверяем авторизацию
+        $user = $this->checkAuth();
 
-        // Получаем данные из запроса
         $data = $request->getData();
         $errors = $request->validate();
 
-        // Если есть ошибки валидации, показываем их в форме
         if (!empty($errors)) {
             return $this->getReviewForm($productId, ['errors' => $errors, 'old' => $data]);
         }
 
-        // Создаем DTO для отзыва
+        // Проверка, что пользователь купил товар
+        $isVerified = \Model\Order::checkVerifiedPurchase($user->getId(), $productId);
+        if (!$isVerified) {
+            return $this->getReviewForm($productId, [
+                'errors' => ['Вы можете оставить отзыв только на купленные товары.'],
+                'old' => $data
+            ]);
+        }
+
+        // Проверка, что отзыв ещё не оставлен
+        $existingReviews = \Model\Review::getReviewsByProductId($productId);
+        foreach ($existingReviews as $review) {
+            if ($review['user_id'] === $user->getId()) {
+                return $this->getReviewForm($productId, [
+                    'errors' => ['Вы уже оставили отзыв на этот продукт.'],
+                    'old' => $data
+                ]);
+            }
+        }
+
+        // Создаём DTO только после успешной валидации
         $reviewDTO = new ReviewDTO(
             $user->getId(),
-            $request->getProductId(),
-            $request->getRating(),
-            $request->getComment()
+            $productId,
+            (int)$request->getRating(),
+            (string)$request->getComment(),
+            true
         );
 
+        // Создаём отзыв через сервис
         try {
-            // Сохраняем отзыв
             $this->reviewService->createReview($reviewDTO);
-
-            // Перенаправляем на страницу с отзывами
-            header("Location: /product/{$productId}/reviews");
-            exit;
+            return $this->getReviewForm($productId, ['success' => true]);
         } catch (\Exception $e) {
-            echo $e->getMessage();
-            exit;
+            return $this->getReviewForm($productId, [
+                'errors' => ['Ошибка при добавлении отзыва. Попробуйте позже.'],
+                'old' => $data
+            ]);
         }
     }
+    public function getProductReviews(int $productId) {
+        $product = $this->reviewService->getProductById($productId);
+        if (!$product) { echo "Продукт не найден."; exit; }
+        $reviews = $this->reviewService->getReviewsByProductId($productId);
+        $averageRating = $this->reviewService->getAverageRating($productId);
+        require_once './../View/ProductReviews.php';
+    }
 
-    // Проверка авторизации
     private function checkAuth()
     {
         $user = $this->authService->getCurrentUser();

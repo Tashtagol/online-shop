@@ -23,6 +23,11 @@ class ReviewRequest extends Request
     {
         $this->errors = [];
 
+        // Валидируем только если пришёл POST
+        if ($this->method !== 'POST') {
+            return $this->errors;
+        }
+
         // --- Product ID ---
         $productId = $this->getProductId();
         if (!$productId || $productId < 1) {
@@ -33,7 +38,7 @@ class ReviewRequest extends Request
         $rating = $this->getRating();
         if ($rating === null) {
             $this->errors['rating'] = 'Рейтинг обязателен';
-        } elseif (!in_array($rating, [1,2,3,4,5], true)) {
+        } elseif (!in_array($rating, [1, 2, 3, 4, 5], true)) {
             $this->errors['rating'] = 'Рейтинг должен быть от 1 до 5';
         }
 

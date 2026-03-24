@@ -31,7 +31,7 @@
                     </div>
 
                     <!-- Кнопка для перехода к отзывам -->
-                    <a href="/product/<?= $product->getId() ?>/reviews" class="btn-reviews">Отзывы</a>
+                    <a href="/product/<?= $product->getId() ?>/reviews/view" class="btn-reviews">Отзывы</a>
                 </div>
             <?php endforeach; ?>
         <?php else: ?>

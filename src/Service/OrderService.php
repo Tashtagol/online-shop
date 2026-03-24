@@ -14,6 +14,7 @@ use Service\CartService;
 class OrderService
 {
     private CartService $cartService;
+
     public function __construct(CartService $cartService)
     {
         $this->cartService = $cartService;
@@ -21,12 +22,12 @@ class OrderService
 
     public function create(CreateOrderDTO $orderDTO) //Избавиться от циклов и мапить методами
     {
-           $pdo=Model::getPDO();
-            $userProducts = UserProduct::getUserCartItems($orderDTO->getUserId());
+        $pdo = Model::getPDO();
+        $userProducts = UserProduct::getUserCartItems($orderDTO->getUserId());
 
-            if (empty($userProducts)) {
-                return null;
-            }
+        if (empty($userProducts)) {
+            return null;
+        }
         try {
             $pdo->beginTransaction();
             $order = Order::create(
@@ -47,12 +48,11 @@ class OrderService
             UserProduct::clearCart($orderDTO->getUserId());
             $pdo->commit();
             return $order;
+        } catch
+        (\PDOException $exception) {
+            $pdo->rollBack();
+            throw $exception;
         }
-        catch
-            (\PDOException $exception) {
-                $pdo->rollBack();
-                throw $exception;
-            }
 
     }
 
@@ -100,5 +100,10 @@ class OrderService
             'items' => $orderItems,
             'total' => $total
         ];
+    }
+
+    public function getProductById(int $productId): ?\Model\Product
+    {
+        return \Model\Product::getProductById($productId); // Предполагаем, что в Product есть findById }
     }
 }
