@@ -41,5 +41,16 @@ class AuthSessionService implements AuthServiceInterface
         $this->sessionStart();
         unset($_SESSION['user_id']);
     }
+    public function checkAuth()
+    {
+        $user = $this->getCurrentUser();
+
+        if (!$user) {
+            header("Location: /login");
+            exit;
+        }
+
+        return $user;
+    }
 
 }

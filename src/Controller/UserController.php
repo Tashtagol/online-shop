@@ -57,7 +57,7 @@ class UserController
     public function handleLogin(LoginRequest $request)
     {
         $request->loginValidate();
-        $errors = $request->getErrors();
+        $errors = $request->errors();
 
         if (!empty($errors)) {
             require_once './../View/login.php';

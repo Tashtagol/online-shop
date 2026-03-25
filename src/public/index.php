@@ -87,7 +87,7 @@ $app->addRoute('/catalog', 'GET', ProductController::class, 'getCatalog');
 $app->addRoute('/add-product', 'GET', ProductController::class, 'getProductForm');
 $app->addRoute('/add-product', 'POST', ProductController::class, 'addProduct', ProductRequest::class);
 $app->addRoute('/cart', 'GET', CartController::class, 'getCart');
-$app->addRoute('/cart/clear', 'POST', CartController::class, 'clearCart');
+$app->addRoute('/cart/clear', 'POST', CartController::class, 'clearFullCart');
 $app->addRoute('/cart', 'POST', CartController::class, 'addOrUpdateItem');
 $app->addRoute('/order', 'GET', OrderController::class, 'getOrderForm');
 $app->addRoute('/order', 'POST', OrderController::class, 'handleOrdersForm', OrderRequest::class);

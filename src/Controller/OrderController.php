@@ -19,7 +19,7 @@ class OrderController
 
     public function getOrderForm(array $params = [])
     {
-        $userId = $this->checkAuth()->getId();
+        $userId = $this->authService->checkAuth()->getId();
         $cartData = $this->orderService->getUserCartData($userId);
         $orderItems = $cartData['items'];
         $total = $cartData['total'];
@@ -32,9 +32,9 @@ class OrderController
 
     public function handleOrdersForm(OrderRequest  $request)
     {
-        $userId = $this->checkAuth()->getId();
+        $userId = $this->authService->checkAuth()->getId();
 
-        $data = $request->getData();
+        $data = $request->all();
         $errors = $request->validate();
 
         if (!empty($errors)) {
@@ -60,7 +60,7 @@ class OrderController
 
     public function listOrders(): void
     {
-        $userId = $this->checkAuth()->getId();
+        $userId = $this->authService->checkAuth()->getId();
         $orders = Order::getAllByUserId($userId);
 
         // Загружаем товары для каждого заказа
@@ -74,7 +74,7 @@ class OrderController
 
     public function getSuccessPage()
     {
-        $userId = $this->checkAuth()->getId();
+        $userId = $this->authService->checkAuth()->getId();
 
         $orderNumber = $_GET['number'] ?? null;
 
@@ -93,13 +93,4 @@ class OrderController
         require_once './../View/orderSuccess.php';
     }
 
-    private function checkAuth()
-    {
-        $user = $this->authService->getCurrentUser();   // Исправить метод, нужен просто check
-        if (!$user) {
-            header("Location: /login");
-            exit;
-        }
-        return $user;
-    }
 }

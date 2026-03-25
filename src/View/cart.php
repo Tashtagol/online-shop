@@ -4,12 +4,12 @@
 
 <section class="cart">
     <div class="cart-wrapper">
+
         <button id="clear-cart-btn" class="btn-clear">🗑️ Очистить корзину</button>
 
         <?php $total = 0; ?>
         <div class="cart-items">
             <?php foreach ($orderProducts as $product):
-                // Используем методы объекта CartItem для расчета суммы
                 $subtotal = $product->getPrice() * $product->getAmount();
                 $total += $subtotal;
                 ?>
@@ -24,7 +24,10 @@
                     </div>
 
                     <div class="cart-right">
-                        <div class="cart-price"><?= number_format($subtotal, 2, ',', ' ') ?> ₽</div>
+                        <div class="cart-price">
+                            <?= number_format($subtotal, 2, ',', ' ') ?> ₽
+                        </div>
+
                         <div class="cart-qty">
                             <button type="button" class="qty-minus">−</button>
                             <span class="qty-value"><?= $product->getAmount(); ?></span>
@@ -47,6 +50,19 @@
         </div>
     </div>
 </section>
+
+<!-- ================= MODAL ================= -->
+<div id="confirmModal" class="modal hidden">
+    <div class="modal-box">
+        <h3>Очистка корзины</h3>
+        <p>Вы уверены, что хотите удалить все товары из корзины?</p>
+
+        <div class="modal-actions">
+            <button id="cancelClear" class="btn-cancel">Нет</button>
+            <button id="confirmClear" class="btn-confirm">Да, очистить</button>
+        </div>
+    </div>
+</div>
 
 <style>
     .cart-wrapper {
@@ -92,14 +108,11 @@
 
     .cart-desc {
         font-size: 15px;
-        line-height: 1.6;
         color: #4b5563;
-        max-width: 520px;
-        overflow: hidden;
-        text-overflow: ellipsis;
         display: -webkit-box;
         -webkit-line-clamp: 3;
         -webkit-box-orient: vertical;
+        overflow: hidden;
     }
 
     .cart-right {
@@ -120,7 +133,6 @@
         border: 1px solid #f3b4d3;
         border-radius: 12px;
         padding: 6px 10px;
-        background: #fff;
     }
 
     .cart-qty button {
@@ -130,31 +142,20 @@
         border-radius: 8px;
         background: #fde2f0;
         cursor: pointer;
-        font-size: 16px;
-    }
-
-    .cart-qty button:hover {
-        background: #fbcfe8;
     }
 
     .qty-value {
         min-width: 22px;
         text-align: center;
-        font-size: 15px;
         font-weight: 600;
     }
 
     .cart-summary {
         display: flex;
         justify-content: space-between;
-        align-items: center;
         margin-top: 40px;
-        padding-top: 20px;
         border-top: 2px dashed #f3b4d3;
-    }
-
-    .cart-total {
-        font-size: 22px;
+        padding-top: 20px;
     }
 
     .cart-total strong {
@@ -168,15 +169,8 @@
         border-radius: 16px;
         background: linear-gradient(135deg, #ec4899, #f472b6);
         color: #fff;
-        font-size: 17px;
         font-weight: 700;
         cursor: pointer;
-        box-shadow: 0 15px 35px rgba(236, 72, 153, 0.4);
-    }
-
-    .cart-btn:hover {
-        transform: translateY(-3px);
-        box-shadow: 0 20px 45px rgba(236, 72, 153, 0.5);
     }
 
     .btn-clear {
@@ -190,79 +184,122 @@
         font-weight: 700;
     }
 
-    .btn-clear:hover {
+    /* ========== MODAL ========== */
+    .modal {
+        position: fixed;
+        inset: 0;
+        background: rgba(0,0,0,0.5);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 999;
+    }
+
+    .modal.hidden {
+        display: none;
+    }
+
+    .modal-box {
+        background: #fff;
+        padding: 25px;
+        border-radius: 16px;
+        width: 320px;
+        text-align: center;
+    }
+
+    .modal-actions {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 20px;
+    }
+
+    .btn-cancel {
+        background: #e5e7eb;
+        border: none;
+        padding: 10px 16px;
+        border-radius: 10px;
+        cursor: pointer;
+    }
+
+    .btn-confirm {
         background: #ef4444;
+        color: white;
+        border: none;
+        padding: 10px 16px;
+        border-radius: 10px;
+        cursor: pointer;
     }
 </style>
 
 <script>
     document.addEventListener('DOMContentLoaded', () => {
 
+        // ================== UPDATE ITEM ==================
         function updateCart(productId, newAmount) {
             fetch('/cart', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ product_id: productId, amount: newAmount, source: 'cart' })
+                body: JSON.stringify({
+                    product_id: productId,
+                    amount: newAmount,
+                    source: 'cart'
+                })
             })
                 .then(res => res.json())
                 .then(data => {
-                    if (data.success) {
-                        const item = document.querySelector(`.cart-item[data-product-id='${productId}']`);
-                        item.querySelector('.qty-value').textContent = newAmount;
-                        item.querySelector('.cart-price').textContent = data.subtotal.toLocaleString('ru-RU', { minimumFractionDigits: 2 }) + ' ₽';
-                        document.getElementById('cart-total').textContent = data.total.toLocaleString('ru-RU', { minimumFractionDigits: 2 }) + ' ₽';
+                    if (!data.success) return alert('Ошибка');
 
-                        // Если товар удален, обновляем список корзины
-                        if (newAmount === 0) {
-                            item.remove();
-                        }
-                    } else {
-                        alert('Ошибка обновления корзины');
+                    const item = document.querySelector(`.cart-item[data-product-id='${productId}']`);
+
+                    if (item) {
+                        item.querySelector('.qty-value').textContent = newAmount;
+                        item.querySelector('.cart-price').textContent =
+                            data.subtotal.toLocaleString('ru-RU', { minimumFractionDigits: 2 }) + ' ₽';
                     }
-                }).catch(() => alert('Ошибка сети'));
+
+                    document.getElementById('cart-total').textContent =
+                        data.total.toLocaleString('ru-RU', { minimumFractionDigits: 2 }) + ' ₽';
+
+                    if (newAmount === 0 && item) item.remove();
+                });
         }
 
         document.querySelectorAll('.cart-item').forEach(item => {
-            const productId = item.dataset.productId;
-            const minus = item.querySelector('.qty-minus');
-            const plus = item.querySelector('.qty-plus');
+            const id = item.dataset.productId;
             const qty = item.querySelector('.qty-value');
 
-            minus.addEventListener('click', () => {
+            item.querySelector('.qty-minus').onclick = () => {
                 let val = parseInt(qty.textContent);
-                if (val > 1) {
-                    updateCart(productId, val - 1); // Уменьшаем количество
-                } else {
-                    // Если количество 1 и нажали минус, просто удаляем товар из корзины без подтверждения
-                    updateCart(productId, 0);
-                }
-            });
+                updateCart(id, val > 1 ? val - 1 : 0);
+            };
 
-            plus.addEventListener('click', () => {
+            item.querySelector('.qty-plus').onclick = () => {
                 let val = parseInt(qty.textContent);
-                updateCart(productId, val + 1); // Увеличиваем количество
-            });
+                updateCart(id, val + 1);
+            };
         });
 
-        // Очистка корзины
-        document.getElementById('clear-cart-btn').addEventListener('click', async () => {
-            if (!confirm('Вы уверены, что хотите очистить корзину?')) return;
+        // ================== MODAL CLEAR CART ==================
+        const modal = document.getElementById('confirmModal');
+        const openBtn = document.getElementById('clear-cart-btn');
+        const cancelBtn = document.getElementById('cancelClear');
+        const confirmBtn = document.getElementById('confirmClear');
 
-            try {
-                const res = await fetch('/cart/clear', { method: 'POST' });
-                const data = await res.json();
+        openBtn.onclick = () => modal.classList.remove('hidden');
 
-                if (data.success) {
-                    // Очистим DOM
-                    document.querySelector('.cart-items').innerHTML = '<p>Корзина пуста</p>';
-                    document.getElementById('cart-total').textContent = '0 ₽';
-                    const cartCount = document.getElementById('cart-count');
-                    if (cartCount) cartCount.textContent = data.count;
-                }
-            } catch (e) {
-                alert('Ошибка при очистке корзины');
+        cancelBtn.onclick = () => modal.classList.add('hidden');
+
+        confirmBtn.onclick = async () => {
+            const res = await fetch('/cart/clear', { method: 'POST' });
+            const data = await res.json();
+
+            if (data.success) {
+                document.querySelector('.cart-items').innerHTML = '<p>Корзина пуста</p>';
+                document.getElementById('cart-total').textContent = '0 ₽';
             }
-        });
+
+            modal.classList.add('hidden');
+        };
 
     });
 </script>

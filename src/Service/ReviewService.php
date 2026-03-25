@@ -3,63 +3,78 @@
 namespace Service;
 
 use Model\Review;
-use Model\UserProduct;
 use Model\Order;
-use DTO\ReviewDTO;
 
 class ReviewService
 {
-    public function createReview(ReviewDTO $reviewDTO): void
+    // ===== ORCHESTRATOR =====
+    public function createReview(int $userId, int $productId, int $rating, string $comment): void
     {
-        $userId = $reviewDTO->getUserId();
-        $productId = $reviewDTO->getProductId();
-        $rating = $reviewDTO->getRating();
-        $comment = $reviewDTO->getComment();
+        $this->ensureVerifiedPurchase($userId, $productId);
+        $this->ensureNotDuplicate($userId, $productId);
+        $this->ensureValidRating($rating);
 
-        // Проверка на наличие заказа на этот товар
-        $isVerifiedPurchase = Order::checkVerifiedPurchase($userId, $productId);
-        if (!$isVerifiedPurchase) {
-            throw new \Exception("Вы можете оставить отзыв только на товары, которые вы заказали.");
+        Review::createReview($userId, $productId, $rating, $comment, true);
+    }
+
+    // ===== 1. Проверка покупки =====
+    public function ensureVerifiedPurchase(int $userId, int $productId): void
+    {
+        if (!Order::checkVerifiedPurchase($userId, $productId)) {
+            throw new \Exception("Вы можете оставить отзыв только на купленный товар.");
         }
-
-        // Создание отзыва
-        Review::createReview($userId, $productId, $rating, $comment, $isVerifiedPurchase);
     }
 
-    public function isProductInUserOrder(int $productId, int $userId): bool
+    // ===== 2. Проверка дубля =====
+    public function ensureNotDuplicate(int $userId, int $productId): void
     {
-        return Order::isProductInUserOrder($productId, $userId);
+        $reviews = Review::getReviewsByProductId($productId);
+
+        foreach ($reviews as $review) {
+            if ($review['user_id'] === $userId) {
+                throw new \Exception("Вы уже оставили отзыв");
+            }
+        }
     }
+
+    // ===== 3. Проверка рейтинга =====
+    public function ensureValidRating(int $rating): void
+    {
+        if ($rating < 1 || $rating > 5) {
+            throw new \Exception("Рейтинг должен быть от 1 до 5.");
+        }
+    }
+
+
     public function getReviewsByProductId(int $productId): array
     {
-        return Review::getReviewsByProductId($productId); // Возвращаем отзывы для продукта
+        return Review::getReviewsByProductId($productId);
     }
 
-    // Получаем продукт по его ID
     public function getProductById(int $productId): ?\Model\Product
     {
-        return \Model\Product::getProductById($productId); // Возвращаем продукт
+        return \Model\Product::getProductById($productId);
     }
 
-    // Получаем среднюю оценку для продукта
     public function getAverageRating(int $productId): float
     {
         $reviews = $this->getReviewsByProductId($productId);
 
-        // Если отзывов нет, возвращаем 0
         if (empty($reviews)) {
             return 0;
         }
 
-        $totalRating = 0;
-        $count = count($reviews);  // Количество отзывов
+        $sum = 0;
 
-        // Суммируем все оценки
         foreach ($reviews as $review) {
-            $totalRating += $review['rating'];
+            $sum += $review['rating'];
         }
 
-        // Возвращаем среднее значение, округленное до 2 знаков после запятой
-        return round($totalRating / $count, 2);
+        return round($sum / count($reviews), 2);
+    }
+
+    public function checkVerifiedPurchase(int $userId, int $productId): bool
+    {
+        return Order::checkVerifiedPurchase($userId, $productId);
     }
 }

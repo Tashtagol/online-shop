@@ -19,7 +19,7 @@ class ProductController
     // Страница каталога
     public function getCatalog()
     {
-        $userId = $this->checkAuth()->getId();
+        $userId = $this->authService->checkAuth()->getId();
 
         $products = Product::getAllProducts();
 
@@ -30,13 +30,4 @@ class ProductController
         require_once './../View/Catalog.php';
     }
 
-    private function checkAuth()
-    {
-        $user = $this->authService->getCurrentUser();
-        if (!$user) {
-            header("Location: /login");
-            exit;
-        }
-        return $user;
-    }
 }

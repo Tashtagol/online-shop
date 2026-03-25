@@ -48,7 +48,6 @@ class Review extends Model
         }
     }
 
-    // Сеттеры для каждого поля (если нужно использовать их)
     public function setUserId(int $user_id): void { $this->user_id = $user_id; }
     public function setProductId(int $product_id): void { $this->product_id = $product_id; }
     public function setRating(int $rating): void { $this->rating = $rating; }
