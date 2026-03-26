@@ -77,4 +77,13 @@ class ReviewService
     {
         return Order::checkVerifiedPurchase($userId, $productId);
     }
+    public function updateReviewOnce(int $reviewId, int $rating, string $comment): void
+    {
+        $this->ensureValidRating($rating);
+        Review::updateReviewOnce($reviewId, $rating, $comment);
+    }
+    public function getReviewById(int $reviewId): ?array
+    {
+        return Review::getReviewById($reviewId);
+    }
 }

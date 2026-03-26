@@ -73,7 +73,6 @@ class ReviewRequest extends Request
                 $this->errors['comment'] = 'Комментарий содержит слишком много повторов';
             }
         }
-
         return $this->errors;
     }
 }

@@ -96,7 +96,8 @@ $app->addRoute('/orders', 'GET', OrderController::class, 'listOrders');
 $app->addRoute('/product/{productId}/reviews', 'GET', ReviewController::class, 'getReviewForm');
 $app->addRoute('/product/{productId}/reviews', 'POST', ReviewController::class, 'submitReview', ReviewRequest::class);
 $app->addRoute('/product/{id}/reviews/view', 'GET', ReviewController::class, 'getProductReviews'); // Страница с отзывами
-
+$app->addRoute('/review/{reviewId}/edit', 'GET', ReviewController::class, 'editReviewForm');
+$app->addRoute('/review/{reviewId}/edit', 'POST', ReviewController::class, 'updateReview', ReviewRequest::class);
 
 // Запускаем приложение
 $app->run();

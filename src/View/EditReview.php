@@ -4,25 +4,21 @@ $product = $product ?? null;
 $errors = $errors ?? [];
 $old = $old ?? [];
 $success = $success ?? false;
-$isEdit = $isEdit ?? false;
+$isEdit = $isEdit ?? true;
 
-$currentRating = $isEdit
-        ? (int)($old['rating'] ?? 0)
-        : (int)($old['rating'] ?? 0);
+$currentRating = (int)($old['rating'] ?? 0);
 
 ?>
 
 <div class="container">
 
     <h3>
-        <?= $isEdit
-                ? 'Редактирование отзыва'
-                : 'Оставить отзыв на продукт: ' . htmlspecialchars($product->getName()) ?>
+        Редактирование отзыва на продукт: <?= htmlspecialchars($product->getName()) ?>
     </h3>
 
     <?php if ($success): ?>
         <div class="success-message">
-            Отзыв успешно <?= $isEdit ? 'обновлён' : 'добавлен' ?>!
+            Отзыв успешно обновлён!
         </div>
     <?php endif; ?>
 
@@ -45,10 +41,7 @@ $currentRating = $isEdit
         </div>
     </div>
 
-    <form method="POST"
-          action="<?= $isEdit
-                  ? '/review/' . $old['id'] . '/edit'
-                  : '/product/' . $product->getId() . '/reviews' ?>">
+    <form method="POST" action="/review/<?= $old['id'] ?>/edit">
 
         <input type="hidden" name="form_sent" value="1">
 
@@ -71,10 +64,11 @@ $currentRating = $isEdit
             <textarea name="comment"><?= htmlspecialchars($old['comment'] ?? '') ?></textarea>
         </div>
 
-        <button type="submit"><?= $isEdit ? 'Сохранить изменения' : 'Отправить отзыв' ?></button>
+        <button type="submit">Сохранить изменения</button>
 
         <a href="/catalog" class="back-button">← Вернуться в каталог</a>
         <a href="/orders" class="orders-button">← Вернуться в мои заказы</a>
+
     </form>
 
 </div>

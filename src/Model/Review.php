@@ -47,6 +47,30 @@ class Review extends Model
             throw new \Exception("Ошибка при получении отзывов.");
         }
     }
+        public static function updateReviewOnce(int $reviewId, int $rating, string $comment): void
+    {
+        $stmt = self::getPDO()->prepare("UPDATE reviews SET rating = :rating, comment = :comment,is_edited = TRUE WHERE id = :id AND is_edited = FALSE");
+
+        $stmt->execute(['id' => $reviewId, 'rating' => $rating, 'comment' => $comment]);
+
+        if ($stmt->rowCount() === 0) {
+            throw new \Exception("Редактировать отзыв можно только один раз.");
+        }
+    }
+
+    public static function getReviewById(int $reviewId): ?array
+    {
+        $stmt = self::getPDO()->prepare("
+        SELECT reviews.*, users.name AS user_name
+        FROM reviews
+        INNER JOIN users ON reviews.user_id = users.id
+        WHERE reviews.id = :id
+    ");
+
+        $stmt->execute(['id' => $reviewId]);
+
+        return $stmt->fetch(\PDO::FETCH_ASSOC) ?: null;
+    }
 
     public function setUserId(int $user_id): void { $this->user_id = $user_id; }
     public function setProductId(int $product_id): void { $this->product_id = $product_id; }
