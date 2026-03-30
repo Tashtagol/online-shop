@@ -58,52 +58,31 @@ class OrderService
 
     public function getUserCartData(int $userId): array
     {
-        // Получаем все товары из корзины пользователя
-        $userProducts = UserProduct::getUserCartItems($userId);
+        // Получаем DTO через CartService
+        $cartItems = $this->cartService->getCart($userId);
 
-        if (empty($userProducts)) {
-            return ['items' => [], 'total' => 0];  // Если корзина пуста, сразу возвращаем пустой массив
-        }
-
-        $orderItems = [];
-        $total = 0;
-
-        // Перебираем товары в корзине и создаем CartItem для каждого
-        foreach ($userProducts as $item) {
-            // Создаем объект CartItem
-            $cartItem = new CartItemDTO(
-                $item->product_id,     // ID товара
-                $item->name,           // Название товара
-                $item->price,          // Цена товара
-                $item->amount,         // Количество товара
-                $item->viewurl,        // URL изображения товара
-                $item->description     // Описание товара
-            );
-
-            // Добавляем CartItem в итоговый массив
-            $orderItems[] = [
-                'product_id' => $cartItem->getId(),
-                'name' => $cartItem->getName(),
-                'price' => $cartItem->getPrice(),
-                'amount' => $cartItem->getAmount(),
-                'sum' => $cartItem->getSum(),
-                'viewurl' => $cartItem->getViewUrl(),
-                'description' => $cartItem->getDescription(),
+        if (empty($cartItems)) {
+            return [
+                'items' => [],
+                'total' => 0
             ];
-
-            // Суммируем общую стоимость
-            $total += $this->cartService->calculateSum($cartItem->getPrice(), $cartItem->getAmount());
         }
 
-        // Возвращаем итоговые данные
-        return [
-            'items' => $orderItems,
-            'total' => $total
-        ];
-    }
+        $items = array_map(function (CartItemDTO $item) {
+            return [
+                'product_id' => $item->getId(),
+                'name' => $item->getName(),
+                'price' => $item->getPrice(),
+                'amount' => $item->getAmount(),
+                'sum' => $item->getSum(),
+                'viewurl' => $item->getViewUrl(),
+                'description' => $item->getDescription(),
+            ];
+        }, $cartItems);
 
-    public function getProductById(int $productId): ?\Model\Product
-    {
-        return \Model\Product::getProductById($productId); // Предполагаем, что в Product есть findById }
+        return [
+            'items' => $items,
+            'total' => $this->cartService->getTotal($cartItems)
+        ];
     }
 }

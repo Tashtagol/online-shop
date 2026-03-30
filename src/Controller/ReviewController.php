@@ -19,9 +19,6 @@ class ReviewController
         $this->authService = $authService;
     }
 
-    /* ===============================
-     *  ФОРМА СОЗДАНИЯ ОТЗЫВА
-     * =============================== */
     public function getReviewForm(int $productId)
     {
         $currentUser = $this->authService->checkAuth();
@@ -56,9 +53,6 @@ class ReviewController
         require_once __DIR__ . '/../View/Review.php';
     }
 
-    /* ===============================
-     *  СОЗДАНИЕ ОТЗЫВА
-     * =============================== */
     public function submitReview(int $productId, ReviewRequest $request)
     {
         $user = $this->authService->checkAuth();
@@ -103,9 +97,6 @@ class ReviewController
         }
     }
 
-    /* ===============================
-     *  СПИСОК ОТЗЫВОВ
-     * =============================== */
     public function getProductReviews(int $productId)
     {
         $product = $this->reviewService->getProductById($productId);
@@ -136,9 +127,7 @@ class ReviewController
         require_once __DIR__ . '/../View/ProductReviews.php';
     }
 
-    /* ===============================
-     *  ФОРМА РЕДАКТИРОВАНИЯ
-     * =============================== */
+
     public function editReviewForm(int $reviewId)
     {
         $user = $this->authService->checkAuth();
@@ -164,9 +153,6 @@ class ReviewController
         require_once __DIR__ . '/../View/Review.php';
     }
 
-    /* ===============================
-     *  ОБНОВЛЕНИЕ ОТЗЫВА (1 РАЗ)
-     * =============================== */
     public function updateReview(int $reviewId, ReviewRequest $request)
     {
         $user = $this->authService->checkAuth();

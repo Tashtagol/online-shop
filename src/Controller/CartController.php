@@ -20,7 +20,7 @@ class CartController
     {
         $userId = $this->checkAuth()->getId();
         $orderProducts = $this->cartService->getCart($userId);
-        $total = $this->cartService->calculateCartTotal($orderProducts);
+        $total = $this->cartService->getTotal($orderProducts);
 
         require_once './../View/cart.php';
     }

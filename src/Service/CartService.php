@@ -27,18 +27,12 @@ class CartService
         $products = UserProduct::getUserCartItems($userId);
         return $this->createCartItemDTOs($products);
     }
-    public function calculateSum(float $price, int $amount): float
-    {
-        return $price * $amount;
-    }
-
-    public function calculateCartTotal(array $products): float
+    public function getTotal(array $products): float
     {
         $total = 0;
 
-        // Для каждого товара рассчитываем его сумму и добавляем к общей
         foreach ($products as $product) {
-            $total += $this->calculateSum($product->getPrice(), $product->getAmount());
+            $total += (float)$product->getPrice() * (int)$product->getAmount();
         }
 
         return $total;
@@ -72,7 +66,7 @@ class CartService
 
         // После обновления/добавления товара, пересчитываем данные корзины
         $products = $this->getCart($userId);
-        $total = $this->calculateCartTotal($products);
+        $total = $this->getTotal($products);
 
         $subtotal = 0;
         foreach ($products as $product) {
