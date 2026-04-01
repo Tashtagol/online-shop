@@ -1,85 +1,62 @@
 <?php
+
 namespace Controller;
 
 use Model\User;
-use Model\OrderProduct;
+use Request\LoginRequest;
 use Request\RegistrateRequest;
 use Request\Request;
-use Request\LoginRequest;
 use Service\Auth\AuthServiceInterface;
-use Service\Auth\AuthSessionService;
-
 
 class UserController
 {
-    private AuthServiceInterface $authService;
+    public function __construct(private AuthServiceInterface $authService) {}
 
-    public function __construct(AuthServiceInterface $authService)
+    public function getRegistrationForm(Request $request): void
     {
-        $this-> authService = $authService;
+        require __DIR__ . '/../View/registrate.php';
     }
 
-    public function getRegistrationForm()
+    public function handleRegistration(RegistrateRequest $request): void
     {
-        require_once './../View/registrate.php';
-    }
-
-    public function handleRegistration(RegistrateRequest $request)
-    {
-        // валидация формата
         $errors = $request->registrationValidate();
 
-        // проверка БД на уникальный email
         if (User::getByEmail($request->getEmail())) {
             $errors['email'] = 'Email уже зарегистрирован';
         }
 
-        // если есть ошибки — вернуть форму
         if (!empty($errors)) {
-            require_once './../View/registrate.php';
+            require __DIR__ . '/../View/registrate.php';
             return;
         }
 
-        // создание пользователя
-        $name = $request->getName();
-        $email = $request->getEmail();
-        User::create($name, $email,$request->getPassword());
+        User::create($request->getName(), $request->getEmail(), $request->getPassword());
 
-        header('Location: ./login');
+        header('Location: /login');
         exit;
     }
 
-    public function getLoginForm()
+    public function getLoginForm(Request $request): void
     {
-        require_once './../View/login.php';
+        require __DIR__ . '/../View/login.php';
     }
 
-    public function handleLogin(LoginRequest $request)
+    public function handleLogin(LoginRequest $request): void
     {
-        $request->loginValidate();
-        $errors = $request->errors();
+        $errors = $request->loginValidate();
 
         if (!empty($errors)) {
-            require_once './../View/login.php';
+            require __DIR__ . '/../View/login.php';
             return;
         }
 
-        $user = User::getByEmail($request->getLogin());
-
-        if (!$user || !password_verify($request->getPassword(), $user->getPassword())) {
+        if (!$this->authService->login($request->getLogin(), $request->getPassword())) {
             $errors['login'] = 'Неверный логин или пароль';
-            require_once './../View/login.php';
+            require __DIR__ . '/../View/login.php';
             return;
         }
 
-        $this->authService->login($user->getEmail(), $request->getPassword());
-
-        // Получаем текущего пользователя через интерфейс
-        $user= $this->authService->getCurrentUser();
-
-        // Теперь можно безопасно перенаправлять на каталог
-        header('Location: ./catalog');
+        header('Location: /catalog');
         exit;
     }
-
 }

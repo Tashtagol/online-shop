@@ -6,51 +6,92 @@ use PDO;
 
 class Review extends Model
 {
+    private int $id;
     private int $user_id;
     private int $product_id;
     private int $rating;
     private string $comment;
     private bool $is_verified_purchase;
+    private bool $is_edited;
+    private string $user_name = '';
+    private string $created_date = '';
 
-    // Метод для создания отзыва
+    public static function fromArray(array $data): self
+    {
+        $review = new self();
+        $review->id                   = (int)($data['id'] ?? 0);
+        $review->user_id              = (int)$data['user_id'];
+        $review->product_id           = (int)$data['product_id'];
+        $review->rating               = (int)$data['rating'];
+        $review->comment              = $data['comment'];
+        $review->is_verified_purchase = (bool)$data['is_verified_purchase'];
+        $review->is_edited            = (bool)($data['is_edited'] ?? false);
+        $review->user_name            = $data['user_name'] ?? '';
+        $review->created_date         = $data['created_date'] ?? '';
+        return $review;
+    }
+
     public static function createReview(int $user_id, int $product_id, int $rating, string $comment, bool $is_verified_purchase): void
     {
         try {
             $stmt = self::getPDO()->prepare("
-            INSERT INTO reviews (user_id, product_id, rating, comment, is_verified_purchase) 
-            VALUES (:user_id, :product_id, :rating, :comment, :is_verified_purchase)
-        ");
-
+                INSERT INTO reviews (user_id, product_id, rating, comment, is_verified_purchase)
+                VALUES (:user_id, :product_id, :rating, :comment, :is_verified_purchase)
+            ");
             $stmt->execute([
-                'user_id' => $user_id,
-                'product_id' => $product_id,
-                'rating' => $rating,
-                'comment' => $comment,
-                'is_verified_purchase' => $is_verified_purchase
+                'user_id'              => $user_id,
+                'product_id'           => $product_id,
+                'rating'               => $rating,
+                'comment'              => $comment,
+                'is_verified_purchase' => $is_verified_purchase,
             ]);
         } catch (\PDOException $e) {
             error_log("PostgreSQL error creating review: " . $e->getMessage());
-            error_log("Data: user_id=$user_id, product_id=$product_id, rating=$rating, comment=$comment, verified=" . ($is_verified_purchase ? 'true' : 'false'));
             throw new \Exception("Ошибка при создании отзыва.");
         }
     }
 
-    // Метод для получения отзывов по ID продукта
     public static function getReviewsByProductId(int $productId): array
     {
         try {
-            $stmt = self::getPDO()->prepare("SELECT reviews.*, users.name AS user_name  FROM reviews INNER JOIN users ON reviews.user_id = users.id WHERE product_id = :product_id ORDER BY id DESC");
+            $stmt = self::getPDO()->prepare("
+                SELECT reviews.*, users.name AS user_name
+                FROM reviews
+                INNER JOIN users ON reviews.user_id = users.id
+                WHERE product_id = :product_id
+                ORDER BY reviews.id DESC
+            ");
             $stmt->execute(['product_id' => $productId]);
-            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+            return array_map(
+                fn(array $row) => self::fromArray($row),
+                $stmt->fetchAll(PDO::FETCH_ASSOC)
+            );
         } catch (\PDOException $e) {
             error_log("Error fetching reviews: " . $e->getMessage());
             throw new \Exception("Ошибка при получении отзывов.");
         }
     }
-        public static function updateReviewOnce(int $reviewId, int $rating, string $comment): void
-    {
-        $stmt = self::getPDO()->prepare("UPDATE reviews SET rating = :rating, comment = :comment,is_edited = TRUE WHERE id = :id AND is_edited = FALSE");
 
+    public static function getReviewById(int $reviewId): ?self
+    {
+        $stmt = self::getPDO()->prepare("
+            SELECT reviews.*, users.name AS user_name
+            FROM reviews
+            INNER JOIN users ON reviews.user_id = users.id
+            WHERE reviews.id = :id
+        ");
+        $stmt->execute(['id' => $reviewId]);
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        return $row ? self::fromArray($row) : null;
+    }
+
+    public static function updateReviewOnce(int $reviewId, int $rating, string $comment): void
+    {
+        $stmt = self::getPDO()->prepare("
+            UPDATE reviews
+            SET rating = :rating, comment = :comment, is_edited = TRUE
+            WHERE id = :id AND is_edited = FALSE
+        ");
         $stmt->execute(['id' => $reviewId, 'rating' => $rating, 'comment' => $comment]);
 
         if ($stmt->rowCount() === 0) {
@@ -58,30 +99,22 @@ class Review extends Model
         }
     }
 
-    public static function getReviewById(int $reviewId): ?array
-    {
-        $stmt = self::getPDO()->prepare("
-        SELECT reviews.*, users.name AS user_name
-        FROM reviews
-        INNER JOIN users ON reviews.user_id = users.id
-        WHERE reviews.id = :id
-    ");
-
-        $stmt->execute(['id' => $reviewId]);
-
-        return $stmt->fetch(\PDO::FETCH_ASSOC) ?: null;
-    }
-
-    public function setUserId(int $user_id): void { $this->user_id = $user_id; }
-    public function setProductId(int $product_id): void { $this->product_id = $product_id; }
-    public function setRating(int $rating): void { $this->rating = $rating; }
-    public function setComment(string $comment): void { $this->comment = $comment; }
-    public function setIsVerifiedPurchase(bool $is_verified_purchase): void { $this->is_verified_purchase = $is_verified_purchase; }
-
-    // Геттеры для каждого поля
+    // Геттеры
+    public function getId(): int { return $this->id; }
     public function getUserId(): int { return $this->user_id; }
     public function getProductId(): int { return $this->product_id; }
     public function getRating(): int { return $this->rating; }
     public function getComment(): string { return $this->comment; }
     public function getIsVerifiedPurchase(): bool { return $this->is_verified_purchase; }
+    public function isEdited(): bool { return $this->is_edited; }
+    public function getUserName(): string { return $this->user_name; }
+    public function getCreatedDate(): string { return $this->created_date; }
+
+    // Сеттеры
+    public function setUserId(int $user_id): void { $this->user_id = $user_id; }
+    public function setProductId(int $product_id): void { $this->product_id = $product_id; }
+    public function setRating(int $rating): void { $this->rating = $rating; }
+    public function setComment(string $comment): void { $this->comment = $comment; }
+    public function setIsVerifiedPurchase(bool $is_verified_purchase): void { $this->is_verified_purchase = $is_verified_purchase; }
+    public function setIsEdited(bool $is_edited): void { $this->is_edited = $is_edited; }
 }

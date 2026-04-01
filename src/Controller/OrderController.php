@@ -1,82 +1,73 @@
 <?php
+
 namespace Controller;
+
 use DTO\CreateOrderDTO;
 use Model\Order;
 use Request\OrderRequest;
+use Request\Request;
 use Service\Auth\AuthServiceInterface;
+use Service\CartService;
 use Service\OrderService;
 
 class OrderController
 {
-    private OrderService  $orderService;
-    private AuthServiceInterface $authService;
+    public function __construct(
+        private OrderService $orderService,
+        private CartService $cartService,
+        private AuthServiceInterface $auth
+    ) {}
 
-    public function __construct(OrderService  $orderService,AuthServiceInterface $authService)
+    public function getOrderForm(Request $request): void
     {
-        $this->orderService = $orderService;
-        $this->authService = $authService;
+        $this->renderOrderForm();
     }
 
-    public function getOrderForm(array $params = [])
+    public function handleOrdersForm(OrderRequest $request): void
     {
-        $userId = $this->authService->checkAuth()->getId();
-        $cartData = $this->orderService->getUserCartData($userId);
-        $orderItems = $cartData['items'];
-        $total = $cartData['total'];
-
-        $errors = $params['errors'] ?? [];
-        $old = $params['old'] ?? [];
-
-        require_once './../View/order.php';
-    }
-
-    public function handleOrdersForm(OrderRequest  $request)
-    {
-        $userId = $this->authService->checkAuth()->getId();
-
-        $data = $request->all();
         $errors = $request->validate();
-
         if (!empty($errors)) {
-            return $this->getOrderForm(['errors' => $errors, 'old' => $data]);
+            $this->renderOrderForm($errors, [
+                'name'    => $request->getName(),
+                'phone'   => $request->getPhone(),
+                'address' => $request->getAddress(),
+                'email'   => $request->getEmail(),
+                'payment' => $request->getPayment(),
+            ]);
+            return;
         }
-        $orderDTO = new CreateOrderDTO(
+
+        $userId = $this->currentUserId();
+        $dto = new CreateOrderDTO(
             $userId,
-            $data['name'],
-            $data['email'],
-            $data['address'],
-            $data['phone'],
-            $data['payment'] ?? ''
+            $request->getName(),
+            $request->getEmail(),
+            $request->getAddress(),
+            $request->getPhone(),
+            $request->getPayment()
         );
-        $order = $this->orderService->create($orderDTO);
 
-        if (!$order) { // если корзина пуста
-            return $this->getOrderForm(['errors' => ['cart' => 'Корзина пуста'], 'old' => $data]);
+        $order = $this->orderService->create($dto);
+        if (!$order) {
+            $this->renderOrderForm(['cart' => 'Корзина пуста']);
+            return;
         }
 
-        header("Location: /order-success?number=" . $order->getOrderNumber());
+        header("Location: /orderSuccess?number=" . $order->getOrderNumber());
         exit;
     }
 
-    public function listOrders(): void
+    public function listOrders(Request $request): void
     {
-        $userId = $this->authService->checkAuth()->getId();
+        $userId = $this->currentUserId();
         $orders = Order::getAllByUserId($userId);
-
-        // Загружаем товары для каждого заказа
-        foreach ($orders as $order) {
-            $orderProducts = $order->getOrderProducts();
-            $order->setProducts($orderProducts); // Получаем товары для заказа
-
-        }
-        require_once './../View/orders.php';
+        require __DIR__ . '/../View/orders.php';
     }
 
-    public function getSuccessPage()
+    public function getSuccessPage(OrderRequest $request): void
     {
-        $userId = $this->authService->checkAuth()->getId();
-
-        $orderNumber = $_GET['number'] ?? null;
+        $userId = $this->currentUserId();
+        $orderNumber = $request->getNumber();
 
         if (!$orderNumber) {
             header('Location: /catalog');
@@ -84,13 +75,24 @@ class OrderController
         }
 
         $order = Order::getByNumber($orderNumber);
-
         if (!$order || !$order->orderBelongsToUser($userId)) {
             header('Location: /catalog');
             exit;
         }
 
-        require_once './../View/orderSuccess.php';
+        require __DIR__ . '/../View/orderSuccess.php';
     }
 
+    private function renderOrderForm(array $errors = [], array $old = []): void
+    {
+        $userId = $this->currentUserId();
+        $orderItems = $this->cartService->getCart($userId);
+        $total = $this->cartService->getTotal($orderItems);
+        require __DIR__ . '/../View/order.php';
+    }
+
+    private function currentUserId(): int
+    {
+        return $this->auth->checkAuth()->getId();
+    }
 }

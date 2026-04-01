@@ -1,7 +1,7 @@
 <div class="container">
 
     <h2><?= htmlspecialchars($product->getName()) ?></h2>
-    <p>Средний рейтинг: <?= renderStars(round($averageRating)) ?> (<?= round($averageRating,1) ?> из 5)</p>
+    <p>Средний рейтинг: <?= renderStars(round($averageRating)) ?> (<?= round($averageRating, 1) ?> из 5)</p>
 
     <?php if (isset($userCanReview) && $userCanReview): ?>
         <a href="/product/<?= $product->getId() ?>/reviews" class="add-review-button">✏ Оставить отзыв</a>
@@ -9,44 +9,37 @@
 
     <?php foreach ($reviews as $review): ?>
 
-        <div class="product-info review-card
-            <?= ($currentUser && $currentUser->getId() === $review['user_id'])
-                ? 'my-review'
-                : '' ?>">
+        <div class="product-info review-card <?= ($currentUser && $currentUser->getId() === $review->getUserId()) ? 'my-review' : '' ?>">
 
             <div class="product-image">
                 <img src="<?= htmlspecialchars($product->getViewUrl()) ?>" alt="<?= htmlspecialchars($product->getName()) ?>">
             </div>
 
             <div class="product-details">
-                <strong><?= htmlspecialchars($review['user_name']) ?></strong>
+                <strong><?= htmlspecialchars($review->getUserName()) ?></strong>
 
                 <div class="review-date">
-                    <?= !empty($review['created_date'])
-                            ? date('d.m.Y H:i', strtotime($review['created_date']))
+                    <?= $review->getCreatedDate()
+                            ? date('d.m.Y H:i', strtotime($review->getCreatedDate()))
                             : 'Дата не указана' ?>
                 </div>
 
                 <div class="review-rating">
-                    <?= renderStars($review['rating']) ?>
+                    <?= renderStars($review->getRating()) ?>
                 </div>
 
-                <?php if ($review['is_edited']): ?>
+                <?php if ($review->isEdited()): ?>
                     <div class="edited-label">Отредактированный отзыв</div>
                 <?php endif; ?>
 
-                <p><?= htmlspecialchars($review['comment']) ?></p>
+                <p><?= htmlspecialchars($review->getComment()) ?></p>
 
-                <?php if ($review['is_verified_purchase']): ?>
+                <?php if ($review->getIsVerifiedPurchase()): ?>
                     <span class="verified">✔ Подтвержденная покупка</span>
                 <?php endif; ?>
 
-                <?php if (
-                        $currentUser &&
-                        $currentUser->getId() === $review['user_id'] &&
-                        !$review['is_edited']
-                ): ?>
-                    <a href="/review/<?= $review['id'] ?>/edit" class="edit-button">
+                <?php if ($currentUser && $currentUser->getId() === $review->getUserId() && !$review->isEdited()): ?>
+                    <a href="/review/<?= $review->getId() ?>/edit" class="edit-button">
                         ✏ Редактировать
                     </a>
                 <?php endif; ?>
@@ -61,7 +54,7 @@
 </div>
 
 <?php
-function renderStars($rating, $max = 5) {
+function renderStars(int $rating, int $max = 5): string {
     $html = '<span class="stars">';
     for ($i = 1; $i <= $max; $i++) {
         $html .= $i <= $rating
@@ -160,12 +153,12 @@ function renderStars($rating, $max = 5) {
     }
 
     .star {
-        color: #ccc; /* пустая звезда */
+        color: #ccc;
         margin-right: 2px;
     }
 
     .star.filled {
-        color: #ffbc00; /* заполненная звезда */
+        color: #ffbc00;
     }
 
     .edited-label {

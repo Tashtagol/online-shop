@@ -24,9 +24,7 @@
                                 </div>
                                 <div class="product-actions">
                                     <!-- Кнопка для перехода к отзыву -->
-                                    <form action="/product/<?= $product->getProductId() ?>/reviews" method="POST">
-                                        <button type="submit" class="btn-review">Оставить отзыв</button>
-                                    </form>
+                                    <a href="/product/<?= $product->getId() ?>/reviews" class="btn-review">Оставить отзыв</a>
                                 </div>
                             </div>
                         </div>

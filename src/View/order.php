@@ -64,22 +64,21 @@ $total = 0;  // Переменная для общей суммы заказа
                 <h4>Товары в заказе:</h4>
                 <div class="checkout-item-list">
                     <?php foreach ($orderItems as $item):
-                        $total += $item['sum'];  // Суммируем итоговую стоимость товаров
+                        // Используем методы объекта ->getSum() или свойства ->sum
+                        $total += $item->getSum();
                         ?>
                         <div class="checkout-item">
                             <div class="checkout-img">
-                                <img src="<?= htmlspecialchars($item['viewurl']) ?>" alt="<?= htmlspecialchars($item['name']) ?>">
+                                <img src="<?= htmlspecialchars($item->getViewUrl()) ?>" alt="<?= htmlspecialchars($item->getName()) ?>">
                             </div>
                             <div class="item-info">
-                                <span class="item-name"><?= htmlspecialchars($item['name']) ?></span>
-                                <span class="item-amount"><?= $item['amount'] ?> шт × <?= number_format($item['price'], 2) ?> ₽</span>
-                                <span class="item-subtotal"><?= number_format($item['sum'], 2) ?> ₽</span>
-                                <!-- Добавляем описание товара -->
-                                <p class="item-description"><?= htmlspecialchars($item['description']) ?></p>
+                                <span class="item-name"><?= htmlspecialchars($item->getName()) ?></span>
+                                <span class="item-amount"><?= $item->getAmount() ?> шт × <?= number_format($item->getPrice(), 2) ?> ₽</span>
+                                <span class="item-subtotal"><?= number_format($item->getSum(), 2) ?> ₽</span>
 
-                                <!-- Добавляем скрытые поля для передачи в форму -->
-                                <input type="hidden" name="items[<?= $item['product_id'] ?>][name]" value="<?= htmlspecialchars($item['name']) ?>">
-                                <input type="hidden" name="items[<?= $item['product_id'] ?>][description]" value="<?= htmlspecialchars($item['description']) ?>">
+                                <p class="item-description"><?= htmlspecialchars($item->getDescription()) ?></p>
+
+                                <input type="hidden" name="items[<?= $item->getId() ?>][name]" value="<?= htmlspecialchars($item->getName()) ?>">
                             </div>
                         </div>
                     <?php endforeach; ?>

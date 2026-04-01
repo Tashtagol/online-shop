@@ -1,69 +1,51 @@
 <?php
+
 namespace Controller;
 
+use Model\UserProduct;
+use Request\ProductRequest;
+use Request\Request;
 use Service\Auth\AuthServiceInterface;
 use Service\CartService;
 
 class CartController
 {
-    private CartService $cartService;
-    private AuthServiceInterface $authService;
+    public function __construct(
+        private CartService $cartService,
+        private AuthServiceInterface $auth
+    ) {}
 
-    public function __construct(CartService $cartService, AuthServiceInterface $authService)
+    public function getCart(Request $request): void
     {
-        $this->cartService = $cartService;
-        $this->authService = $authService;
-    }
-
-    // Страница корзины
-    public function getCart()
-    {
-        $userId = $this->checkAuth()->getId();
+        $userId        = $this->auth->checkAuth()->getId();
         $orderProducts = $this->cartService->getCart($userId);
-        $total = $this->cartService->getTotal($orderProducts);
-
-        require_once './../View/cart.php';
+        $total         = $this->cartService->getTotal($orderProducts);
+        require __DIR__ . '/../View/cart.php';
     }
 
-    // Добавление/обновление товара
-    public function addOrUpdateItem()
+    public function addOrUpdateItem(ProductRequest $request): void
     {
-        $data = json_decode(file_get_contents('php://input'), true);
-        $userId = $this->checkAuth()->getId();
-        $result = $this->cartService->addOrUpdateProductInCart($userId, $data);
+        $userId    = $this->auth->checkAuth()->getId();
+        $productId = $request->getProductId();
+
+        $this->cartService->addOrUpdateProductInCart($userId, $productId, $request->getAmount(), $request->getSource());
+
+        $items = $this->cartService->getCart($userId);
 
         header('Content-Type: application/json');
         echo json_encode([
-            'success' => true,
-            'total' => $result['total'],
-            'subtotal' => $result['subtotal'],
-            'count' => $result['count'],
+            'success'  => true,
+            'total'    => $this->cartService->getTotal($items),
+            'count'    => $this->cartService->getCount($items),
+            'subtotal' => $this->cartService->getSubtotal($items, $productId),
         ]);
         exit;
     }
 
-    public function clearFullCart()
-    {
-        $userId = $this->checkAuth()->getId();
-        $this->cartService->clearCart($userId);
-
-        header('Content-Type: application/json');
-        echo json_encode([
-            'success' => true,
-            'count' => 0,
-            'items' => [],
-            'total' => 0
-        ]);
+    public function clearFullCart() {
+        $userId = $this->auth->checkAuth()->getId();
+        UserProduct::clearCart($userId);
+        echo json_encode(['success' => true, 'count' => 0, 'total' => 0]);
         exit;
-    }
-
-    private function checkAuth()
-    {
-        $user = $this->authService->getCurrentUser();
-        if (!$user) {
-            header("Location: /login");
-            exit;
-        }
-        return $user;
     }
 }

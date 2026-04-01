@@ -17,9 +17,9 @@ class App
         $this->container = $container;
     }
 
-    public function run()
+    public function run(): void
     {
-        $requestUri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+        $requestUri    = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
         $requestMethod = $_SERVER['REQUEST_METHOD'];
 
         foreach ($this->routes as $pattern => $methods) {
@@ -37,36 +37,26 @@ class App
                     return;
                 }
 
-                $className = $route['class'];
-                $methodName = $route['method'];
+                $className    = $route['class'];
+                $methodName   = $route['method'];
                 $requestClass = $route['request'] ?? Request::class;
 
                 $controller = $this->container->get($className);
 
-                /**
-                 * =========================
-                 * CLEAN VARIANT 3 LOGIC
-                 * =========================
-                 */
-
-                if ($requestMethod === 'POST') {
-
-                    // создаём Request только для POST
-                    $request = new $requestClass($requestMethod, $_POST);
-
-                    call_user_func_array(
-                        [$controller, $methodName],
-                        array_merge($params, [$request])
-                    );
-
+                if ($requestMethod === 'GET') {
+                    $data = $_GET;
+                } elseif (!empty($_POST)) {
+                    $data = $_POST;
                 } else {
-
-                    // GET → без Request вообще
-                    call_user_func_array(
-                        [$controller, $methodName],
-                        $params
-                    );
+                    $data = json_decode(file_get_contents('php://input'), true) ?? [];
                 }
+
+                $request = new $requestClass($requestMethod, $data);
+
+                call_user_func_array(
+                    [$controller, $methodName],
+                    array_merge($params, [$request])
+                );
 
                 return;
             }
@@ -83,7 +73,6 @@ class App
         string $methodName,
         string $requestClass = Request::class
     ): void {
-
         $pattern = preg_replace('/\{(\w+)\}/', '(\w+)', $requestUri);
 
         if (!isset($this->routes[$pattern])) {
@@ -91,9 +80,9 @@ class App
         }
 
         $this->routes[$pattern][$requestMethod] = [
-            'class' => $className,
-            'method' => $methodName,
-            'request' => $requestClass
+            'class'   => $className,
+            'method'  => $methodName,
+            'request' => $requestClass,
         ];
     }
 }

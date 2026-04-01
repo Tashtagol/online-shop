@@ -53,9 +53,11 @@ $container->set(CartController::class, function (Container $container) {
 });
 
 $container->set(OrderController::class, function (Container $container) {
-    $authService = $container->get(\Service\Auth\AuthServiceInterface::class);
-    $orderService = $container->get(OrderService::class);  // Получаем OrderService из контейнера
-    return new OrderController($orderService, $authService);
+    $authService = $container->get(\Service\Auth\AuthServiceInterface::class); // Получаем AuthService
+    $orderService = $container->get(OrderService::class); // Получаем OrderService
+    $cartService = $container->get(CartService::class); // Получаем CartService (добавляем CartService)
+
+    return new OrderController($orderService, $cartService, $authService); // Передаем все зависимости
 });
 
 $container->set(ProductController::class, function (Container $container) {
@@ -88,10 +90,10 @@ $app->addRoute('/add-product', 'GET', ProductController::class, 'getProductForm'
 $app->addRoute('/add-product', 'POST', ProductController::class, 'addProduct', ProductRequest::class);
 $app->addRoute('/cart', 'GET', CartController::class, 'getCart');
 $app->addRoute('/cart/clear', 'POST', CartController::class, 'clearFullCart');
-$app->addRoute('/cart', 'POST', CartController::class, 'addOrUpdateItem');
+$app->addRoute('/cart', 'POST', CartController::class, 'addOrUpdateItem', ProductRequest::class);
 $app->addRoute('/order', 'GET', OrderController::class, 'getOrderForm');
 $app->addRoute('/order', 'POST', OrderController::class, 'handleOrdersForm', OrderRequest::class);
-$app->addRoute('/order-success', 'GET', OrderController::class, 'getSuccessPage');
+$app->addRoute('/orderSuccess', 'GET', OrderController::class, 'getSuccessPage', OrderRequest::class);
 $app->addRoute('/orders', 'GET', OrderController::class, 'listOrders');
 $app->addRoute('/product/{productId}/reviews', 'GET', ReviewController::class, 'getReviewForm');
 $app->addRoute('/product/{productId}/reviews', 'POST', ReviewController::class, 'submitReview', ReviewRequest::class);

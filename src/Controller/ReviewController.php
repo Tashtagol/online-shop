@@ -2,203 +2,132 @@
 
 namespace Controller;
 
-use Service\ReviewService;
-use Service\Auth\AuthServiceInterface;
+use Model\Order;
+use Model\Product;
+use Model\Review;
+use Request\Request;
 use Request\ReviewRequest;
+use Service\Auth\AuthServiceInterface;
+use Service\ReviewService;
 
 class ReviewController
 {
-    private ReviewService $reviewService;
-    private AuthServiceInterface $authService;
-
     public function __construct(
-        ReviewService $reviewService,
-        AuthServiceInterface $authService
-    ) {
-        $this->reviewService = $reviewService;
-        $this->authService = $authService;
-    }
+        private ReviewService $service,
+        private AuthServiceInterface $auth
+    ) {}
 
-    public function getReviewForm(int $productId)
+    public function getProductReviews(int $productId, Request $request): void
     {
-        $currentUser = $this->authService->checkAuth();
-
-        $product = $this->reviewService->getProductById($productId);
-
+        $product = Product::getProductById($productId);
         if (!$product) {
-            echo "Продукт не найден";
-            exit;
+            http_response_code(404);
+            echo "Товар не найден";
+            return;
         }
 
-        // Проверяем, может ли пользователь оставить отзыв
+        $reviews = Review::getReviewsByProductId($productId);
+        $averageRating = $this->service->getAverageRating($productId);
+        $currentUser = $this->auth->getCurrentUser();
+
         $userCanReview = false;
         if ($currentUser) {
-            $hasPurchased = $this->reviewService->checkVerifiedPurchase($currentUser->getId(), $productId);
-            $reviews = $this->reviewService->getReviewsByProductId($productId);
-            $hasReview = false;
-            foreach ($reviews as $r) {
-                if ($r['user_id'] === $currentUser->getId()) {
-                    $hasReview = true;
-                    break;
-                }
-            }
-            $userCanReview = $hasPurchased && !$hasReview;
+            $hasPurchased = Order::checkVerifiedPurchase($currentUser->getId(), $productId);
+            $hasAlreadyReviewed = !empty(array_filter(
+                $reviews, fn(Review $r) => $r->getUserId() === $currentUser->getId()
+            ));
+            $userCanReview = $hasPurchased && !$hasAlreadyReviewed;
         }
 
-        $isEdit = false;
-        $old = [];
-        $errors = [];
-        $success = false;
-
-        require_once __DIR__ . '/../View/Review.php';
+        require __DIR__ . '/../View/ProductReviews.php';
     }
 
-    public function submitReview(int $productId, ReviewRequest $request)
+    public function getReviewForm(int $productId, Request $request): void
     {
-        $user = $this->authService->checkAuth();
+        $this->auth->checkAuth();
+        $product = Product::getProductById($productId);
+        $this->renderReviewForm($product);
+    }
 
-        if (!$request->isPost()) {
-            return $this->getReviewForm($productId);
-        }
-
+    public function submitReview(int $productId, ReviewRequest $request): void
+    {
+        $user = $this->auth->checkAuth();
         $errors = $request->validate();
-        if (!$request->isPost() || empty($_POST)) { return $this->getReviewForm($productId); }
+        $product = Product::getProductById($productId);
 
         if (!empty($errors)) {
-            $product = $this->reviewService->getProductById($productId);
-            $isEdit = false;
-            $old = $request->all();
-            $success = false;
-
-            require_once __DIR__ . '/../View/Review.php';
+            $this->renderReviewForm($product, $errors, $request->all());
             return;
         }
 
         try {
-            $this->reviewService->createReview(
-                $user->getId(),
-                $productId,
-                $request->getRating(),
-                $request->getComment()
+            $this->service->createReview(
+                $user->getId(), $productId,
+                $request->getRating(), $request->getComment()
             );
-
             header("Location: /product/$productId/reviews/view");
             exit;
-
         } catch (\Exception $e) {
-
-            $product = $this->reviewService->getProductById($productId);
-            $errors = [$e->getMessage()];
-            $old = $request->all();
-            $isEdit = false;
-            $success = false;
-
-            require_once __DIR__ . '/../View/Review.php';
+            $this->renderReviewForm($product, ['common' => $e->getMessage()], $request->all());
         }
     }
 
-    public function getProductReviews(int $productId)
+    public function editReviewForm(int $reviewId, Request $request): void
     {
-        $product = $this->reviewService->getProductById($productId);
+        $user = $this->auth->checkAuth();
+        $review = Review::getReviewById($reviewId);
 
-        if (!$product) {
-            echo "Продукт не найден.";
+        if (!$review || $review->getUserId() !== $user->getId()) {
+            header('Location: /catalog');
             exit;
         }
 
-        $reviews = $this->reviewService->getReviewsByProductId($productId);
-        $averageRating = $this->reviewService->getAverageRating($productId);
-        $currentUser = $this->authService->getCurrentUser();
-
-        // Проверяем, может ли пользователь оставить отзыв
-        $userCanReview = false;
-        if ($currentUser) {
-            $hasPurchased = $this->reviewService->checkVerifiedPurchase($currentUser->getId(), $productId);
-            $hasReview = false;
-            foreach ($reviews as $r) {
-                if ($r['user_id'] === $currentUser->getId()) {
-                    $hasReview = true;
-                    break;
-                }
-            }
-            $userCanReview = $hasPurchased && !$hasReview;
+        if ($review->isEdited()) {
+            header('Location: /catalog');
+            exit;
         }
 
-        require_once __DIR__ . '/../View/ProductReviews.php';
+        $product = Product::getProductById($review->getProductId());
+        $this->renderReviewForm($product, [], [
+            'id'      => $reviewId,
+            'rating'  => $review->getRating(),
+            'comment' => $review->getComment(),
+        ], true);
     }
 
-
-    public function editReviewForm(int $reviewId)
+    public function updateReview(int $reviewId, ReviewRequest $request): void
     {
-        $user = $this->authService->checkAuth();
-        $review = $this->reviewService->getReviewById($reviewId);
+        $user = $this->auth->checkAuth();
+        $review = Review::getReviewById($reviewId);
 
-        if (!$review || $review['user_id'] !== $user->getId()) {
-            echo "Доступ запрещён";
-            exit;
-        }
-
-        if ($review['is_edited']) {
-            echo "Редактировать отзыв можно только один раз.";
-            exit;
-        }
-
-        $product = $this->reviewService->getProductById($review['product_id']);
-
-        $isEdit = true;
-        $old = $review;
-        $errors = [];
-        $success = false;
-
-        require_once __DIR__ . '/../View/Review.php';
-    }
-
-    public function updateReview(int $reviewId, ReviewRequest $request)
-    {
-        $user = $this->authService->checkAuth();
-        $review = $this->reviewService->getReviewById($reviewId);
-
-        if (!$review || $review['user_id'] !== $user->getId()) {
-            echo "Доступ запрещён";
-            exit;
-        }
-
-        if ($review['is_edited']) {
-            echo "Редактировать отзыв можно только один раз.";
+        if (!$review || $review->getUserId() !== $user->getId() || $review->isEdited()) {
+            header('Location: /catalog');
             exit;
         }
 
         $errors = $request->validate();
+        $product = Product::getProductById($review->getProductId());
 
         if (!empty($errors)) {
-
-            $product = $this->reviewService->getProductById($review['product_id']);
-            $isEdit = true;
-            $old = $request->all();
-
-            require_once __DIR__ . '/../View/Review.php';
+            $this->renderReviewForm($product, $errors, array_merge($request->all(), ['id' => $reviewId]), true);
             return;
         }
 
         try {
-
-            $this->reviewService->updateReviewOnce(
-                $reviewId,
-                $request->getRating(),
-                $request->getComment()
-            );
-
-            header("Location: /product/{$review['product_id']}/reviews/view");
+            $this->service->updateReviewOnce($reviewId, $request->getRating(), $request->getComment());
+            header("Location: /product/{$review->getProductId()}/reviews/view");
             exit;
-
         } catch (\Exception $e) {
-
-            $product = $this->reviewService->getProductById($review['product_id']);
-            $errors = [$e->getMessage()];
-            $isEdit = true;
-            $old = $request->all();
-
-            require_once __DIR__ . '/../View/Review.php';
+            $this->renderReviewForm($product, ['common' => $e->getMessage()], array_merge($request->all(), ['id' => $reviewId]), true);
         }
+    }
+
+    private function renderReviewForm(
+        ?Product $product,
+        array $errors = [],
+        array $old = [],
+        bool $isEdit = false
+    ): void {
+        require __DIR__ . '/../View/Review.php';
     }
 }

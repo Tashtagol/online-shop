@@ -4,61 +4,108 @@ namespace Request;
 
 class OrderRequest extends Request
 {
-    public function getNumber()
+    private string $name;
+    private string $phone;
+    private string $address;
+    private string $email;
+    private string $payment;
+    private ?string $number = null;
+
+    // Ядро (App.php) передает HTTP-метод и массив данных (например, $_POST)
+    public function __construct(string $method, array $data = [])
     {
-        return $this->data['address'];
+         parent::__construct($method, $data);
+        // Инициализируем свойства из переданного массива
+        $this->name = $data['name'] ?? '';
+        $this->phone = $data['phone'] ?? '';
+        $this->address = $data['address'] ?? '';
+        $this->email = $data['email'] ?? '';
+        $this->payment = $data['payment'] ?? '';
+        $this->number = $data['number'] ?? null;
+
     }
-    public function getName()
+
+    // Методы для получения значений
+    public function getName(): string
     {
-        return $this->data['name'];
+        return $this->name;
     }
-    public function getPhone()
+
+    public function getPhone(): string
     {
-        return $this->data['phone'];
+        return $this->phone;
     }
-    public function getEmail()
+
+    public function getAddress(): string
     {
-        return $this->data['email'];
+        return $this->address;
     }
+
+    public function getEmail(): string
+    {
+        return $this->email;
+    }
+
+    public function getPayment(): string
+    {
+        return $this->payment;
+    }
+    public function getNumber(): ?string
+    {
+        return $this->number;
+    }
+
+    // Валидация данных
     public function validate(): array
     {
+        if (!$this->isPost()) {
+            return [];
+        }
+
+            // Очищаем ошибки перед новой валидацией
         $this->errors = [];
 
-        // Имя: обязательно, только буквы, пробелы, дефисы
-        if (empty($this->data['name'])) {
+
+        // Проверка имени
+        if (empty($this->name)) {
             $this->errors['name'] = 'Имя обязательно';
-        } elseif (!preg_match('/^[а-яА-ЯёЁa-zA-Z\s\-]+$/u', $this->data['name'])) {
+        } elseif (!preg_match('/^[а-яА-ЯёЁa-zA-Z\s\-]+$/u', $this->name)) {
             $this->errors['name'] = 'Имя должно содержать только буквы, пробелы или дефисы';
         }
 
-        // Телефон: обязательно, 10-11 цифр, может быть с + в начале
-        if (empty($this->data['phone'])) {
+        // Проверка телефона
+        if (empty($this->phone)) {
             $this->errors['phone'] = 'Телефон обязателен';
         } else {
-            // Убираем все кроме цифр и плюса
-            $phone = preg_replace('/[^\d+]/', '', $this->data['phone']);
-            // Проверяем на формат: +7xxxxxxxxxx или 8xxxxxxxxxx или просто 10-11 цифр
+            $phone = preg_replace('/[^\d+]/', '', $this->phone);
             if (!preg_match('/^(\+7|8)?\d{10}$/', $phone)) {
                 $this->errors['phone'] = 'Телефон должен содержать 10 цифр и может начинаться с +7 или 8';
             }
         }
 
-        // Адрес: просто не пустой
-        if (empty($this->data['address'])) {
+        // Проверка адреса
+        if (empty($this->address)) {
             $this->errors['address'] = 'Адрес обязателен';
         }
 
-        // Email: обязательно и валидный email
-        if (empty($this->data['email'])) {
+        // Проверка email
+        if (empty($this->email)) {
             $this->errors['email'] = 'Email обязателен';
-        } elseif (!filter_var($this->data['email'], FILTER_VALIDATE_EMAIL)) {
+        } elseif (!filter_var($this->email, FILTER_VALIDATE_EMAIL)) {
             $this->errors['email'] = 'Некорректный email';
         }
-        if (empty($this->data['payment'])) {
+
+        // Проверка способа оплаты
+        if (empty($this->payment)) {
             $this->errors['payment'] = 'Выберите способ оплаты';
         }
 
+        return $this->errors;
+    }
 
+    // Получить ошибки
+    public function getErrors(): array
+    {
         return $this->errors;
     }
 }
