@@ -1,4 +1,5 @@
 <?php
+
 namespace Model;
 
 use PDO;
@@ -11,17 +12,14 @@ class Product extends Model
     private string $viewurl;
     private string $description;
 
-
     public static function createFromArray(array $data): self
     {
-        $obj = new self();
-
-        $obj->id = isset($data['id']) ? (int)$data['id'] : 0;
-        $obj->name = isset($data['name']) && is_string($data['name']) ? $data['name'] : 'Default Name';
-        $obj->price = isset($data['price']) && is_numeric($data['price']) ? (float)$data['price'] : 0.0;
-        $obj->viewurl = isset($data['viewurl']) && filter_var($data['viewurl'], FILTER_VALIDATE_URL) ? $data['viewurl'] : '';
-        $obj->description = isset($data['description']) ? $data['description'] : '';
-
+        $obj              = new self();
+        $obj->id          = (int)($data['id'] ?? 0);
+        $obj->name        = $data['name'] ?? 'Default Name';
+        $obj->price       = (float)($data['price'] ?? 0.0);
+        $obj->viewurl     = $data['viewurl'] ?? '';
+        $obj->description = $data['description'] ?? '';
         return $obj;
     }
 
@@ -37,7 +35,6 @@ class Product extends Model
         }
     }
 
-    // Получаем все товары
     public static function getAllProducts(): array
     {
         $rows = self::query("SELECT * FROM products");
@@ -54,7 +51,7 @@ class Product extends Model
     {
         if (empty($ids)) return [];
 
-        $ids = array_filter($ids, fn($id) => is_int($id) || ctype_digit($id));
+        $ids = array_values(array_filter($ids, fn($id) => is_numeric($id) && (int)$id > 0));
 
         $placeholders = implode(',', array_fill(0, count($ids), '?'));
         $rows = self::query("SELECT * FROM products WHERE id IN ($placeholders)", $ids);
